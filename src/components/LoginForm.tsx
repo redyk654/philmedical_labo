@@ -19,7 +19,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
     try {
       await onSubmit(username, password);
-      console.log("login success");
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {

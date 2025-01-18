@@ -75,7 +75,6 @@ export const authenticatedFetch = async (
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
-    headers,
   });
 
   if (response.status === 401) {

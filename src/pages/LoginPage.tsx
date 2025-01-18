@@ -1,12 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Beaker } from 'lucide-react';
 import LoginForm from '../components/LoginForm.tsx';
 import { login } from '../services/auth.tsx';
 
-function Login() {
+const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const handleLogin = async (username: string, password: string) => {
-    await login(username, password);
-    // Redirect or update app state after successful login
+    try {
+      await login(username, password);
+      navigate('/');
+    } catch (error) {
+      throw error;
+    }
   };
 
   return (
@@ -28,6 +35,6 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
-export default Login;
+export default LoginPage;
