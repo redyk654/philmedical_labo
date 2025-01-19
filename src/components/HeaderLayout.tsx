@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Beaker } from 'lucide-react';
+import { Beaker, Home, UserCircle2, Settings, LogOut } from 'lucide-react';
 import { logout } from '../services/auth.tsx';
 
-const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -32,33 +32,37 @@ const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             <div className="flex items-center space-x-4">
               <Link
                 to="/"
-                className={`px-3 py-2 rounded-md ${
+                className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
                   location.pathname === '/' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
-                Accueil
+                <Home className="w-5 h-5" />
+                <span>Accueil</span>
               </Link>
               <Link
                 to="/profile"
-                className={`px-3 py-2 rounded-md ${
+                className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
                   location.pathname === '/profile' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
-                Profil
+                <UserCircle2 className="w-5 h-5" />
+                <span>Profil</span>
               </Link>
               <Link
                 to="/edit-profile"
-                className={`px-3 py-2 rounded-md ${
+                className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
                   location.pathname === '/edit-profile' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
-                Editer profil
+                <Settings className="w-5 h-5" />
+                <span>Editer profil</span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors"
+                className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors flex items-center space-x-2"
               >
-                Deconnection
+                <LogOut className="w-5 h-5" />
+                <span>Deconnection</span>
               </button>
             </div>
           </div>
@@ -78,4 +82,4 @@ const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   );
 };
 
-export default HeaderLayout;
+export default Layout;
