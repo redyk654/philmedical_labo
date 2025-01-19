@@ -67,6 +67,10 @@ const ProfilePage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-500">Date Naissance</label>
               <div className="mt-1 text-gray-900">12 July 2019</div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-500">Adresse</label>
+              <div className="mt-1 text-gray-900">Douala</div>
+            </div>
           </div>
           <div className="space-y-4">
             <div>

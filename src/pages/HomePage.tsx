@@ -25,6 +25,8 @@ const HomePage: React.FC = () => {
         const results = await searchPatients(term);
         setPatients(results);
       } catch (err) {
+        console.log(err);
+        
         setError('Une erreur est survenue lors de la recherche');
         setPatients([]);
       } finally {
@@ -40,8 +42,9 @@ const HomePage: React.FC = () => {
     debouncedSearch(value);
   };
 
-  const handlePatientClick = (patientId: number) => {
-    navigate(`/profile/${patientId}`);
+  const handlePatientClick = (codePatient: string) => {
+    localStorage.setItem('selectedPatient', codePatient);
+    navigate('/profile');
   };
 
   return (
@@ -51,7 +54,7 @@ const HomePage: React.FC = () => {
       <div className="relative">
         <input
           type="text"
-          placeholder="rechercher un profil"
+          placeholder="rechercher un profil (nom, code, téléphone)"
           value={searchTerm}
           onChange={handleSearchChange}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#464E77] focus:border-[#464E77] outline-none transition pl-12"
@@ -80,10 +83,13 @@ const HomePage: React.FC = () => {
                   Noms
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Code Patient
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Sexe
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date De Naissance
+                  Age
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Telephone
@@ -94,20 +100,23 @@ const HomePage: React.FC = () => {
               {patients.map((patient) => (
                 <tr
                   key={patient.id}
-                  onClick={() => handlePatientClick(patient.id)}
+                  onClick={() => handlePatientClick(patient.code)}
                   className="hover:bg-gray-50 cursor-pointer"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     {patient.nom}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {patient.sexe}
+                    {patient.code}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {patient.date_naissance}
+                    {patient.sexe === 'H' ? 'Homme' : 'Femme'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {patient.telephone}
+                    {patient.age ? patient.age + 'ans' : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {patient.telephone || 'N/A'}
                   </td>
                 </tr>
               ))}

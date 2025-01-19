@@ -71,10 +71,12 @@ export const authenticatedFetch = async (
   const headers = {
     ...options.headers,
     'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
   };
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
+    headers,
   });
 
   if (response.status === 401) {
