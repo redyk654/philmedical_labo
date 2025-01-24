@@ -8,6 +8,9 @@ export interface Patient {
   age: number;
   date_naissance: string;
   telephone: string;
+  quartier?: string;
+  profession?: string;
+  situation_matrimoniale?: string;
 }
 
 export interface Bilan {
@@ -29,6 +32,21 @@ export const searchPatients = async (searchTerm: string): Promise<Patient[]> => 
       throw error;
     }
     throw new Error('Une erreur inattendue est survenue');
+  }
+};
+
+export const getPatientByCode = async (code: string): Promise<Patient> => {
+  try {
+    const response = await authenticatedFetch(`/get_patient.php?code=${encodeURIComponent(code)}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch patient details');
+    }
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('An unexpected error occurred');
   }
 };
 

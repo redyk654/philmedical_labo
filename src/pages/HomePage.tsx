@@ -24,9 +24,7 @@ const HomePage: React.FC = () => {
       try {
         const results = await searchPatients(term);
         setPatients(results);
-      } catch (err) {
-        console.log(err);
-        
+      } catch (err) {        
         setError('Une erreur est survenue lors de la recherche');
         setPatients([]);
       } finally {
@@ -43,7 +41,7 @@ const HomePage: React.FC = () => {
   };
 
   const handlePatientClick = (codePatient: string) => {
-    localStorage.setItem('selectedPatient', codePatient);
+    localStorage.setItem('selectedPatientCode', codePatient);
     navigate('/profile');
   };
 

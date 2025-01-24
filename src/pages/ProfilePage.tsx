@@ -1,23 +1,56 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-
-interface Bilan {
-  numero: string;
-  dateEnregistrement: string;
-  status: 'Complété' | 'Incomplet';
-}
-
-const bilans: Bilan[] = [
-  { numero: "64", dateEnregistrement: "6 April 2019", status: "Complété" },
-  { numero: "80", dateEnregistrement: "3 March 2006", status: "Incomplet" },
-  { numero: "19", dateEnregistrement: "2 July 2017", status: "Complété" },
-  { numero: "24", dateEnregistrement: "22 February 2019", status: "Complété" },
-  { numero: "66", dateEnregistrement: "28 August 2022", status: "Incomplet" },
-  { numero: "83", dateEnregistrement: "8 January 2020", status: "Complété" },
-  { numero: "28", dateEnregistrement: "20 February 2022", status: "Complété" }
-];
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getPatientByCode, getPatientBilans, Patient, Bilan } from '../services/api.tsx';
 
 const ProfilePage: React.FC = () => {
+  const navigate = useNavigate();
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const [bilans, setBilans] = useState<Bilan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      const patientCode = localStorage.getItem('selectedPatientCode');
+      
+      if (!patientCode) {
+        navigate('/');
+        return;
+      }
+
+      try {
+        const patientData = await getPatientByCode(patientCode);
+        setPatient(patientData);
+        
+        const bilansData = await getPatientBilans(patientData.id);
+        setBilans(bilansData);
+      } catch (err) {
+        console.error(err);
+        setError('Erreur lors du chargement des données du patient');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPatientData();
+  }, [navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-gray-600">Chargement...</div>
+      </div>
+    );
+  }
+
+  if (error || !patient) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+        {error || 'Patient non trouvé'}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -53,54 +86,54 @@ const ProfilePage: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-500">Nom</label>
-              <div className="mt-1 text-gray-900">Ali Mambwe</div>
+              <div className="mt-1 text-gray-900">{patient.nom}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Sexe</label>
-              <div className="mt-1 text-gray-900">Homme</div>
+              <div className="mt-1 text-gray-900">{patient.sexe}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Age</label>
-              <div className="mt-1 text-gray-900">5 Ans</div>
+              <div className="mt-1 text-gray-900">{patient.age} Ans</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Date Naissance</label>
-              <div className="mt-1 text-gray-900">12 July 2019</div>
+              <div className="mt-1 text-gray-900">{patient.date_naissance}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Adresse</label>
-              <div className="mt-1 text-gray-900">Douala</div>
+              <div className="mt-1 text-gray-900">{patient.quartier || '-'}</div>
             </div>
           </div>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-500">Code Patient</label>
-              <div className="mt-1 text-gray-900">AKDJ2O</div>
+              <div className="mt-1 text-gray-900">{patient.code}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Telephone</label>
-              <div className="mt-1 text-gray-900">(560) 710-8565</div>
+              <div className="mt-1 text-gray-900">{patient.telephone}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Profession</label>
-              <div className="mt-1 text-gray-900">Policier</div>
+              <div className="mt-1 text-gray-900">{patient.profession || '-'}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Situation Matrimoniale</label>
-              <div className="mt-1 text-gray-900">Celibataire</div>
+              <div className="mt-1 text-gray-900">{patient.situation_matrimoniale || '-'}</div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6 text-capitalize">Hitorique Des Bilans</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Historique Des Bilans</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  code Labo
+                  Code Labo
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date D'enregistrement
@@ -114,13 +147,13 @@ const ProfilePage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {bilans.map((bilan, index) => (
-                <tr key={index} className="hover:bg-gray-50">
+              {bilans.map((bilan) => (
+                <tr key={bilan.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     {bilan.numero}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {bilan.dateEnregistrement}
+                    {bilan.date_enregistrement}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -141,6 +174,13 @@ const ProfilePage: React.FC = () => {
                   </td>
                 </tr>
               ))}
+              {bilans.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                    Aucun bilan trouvé
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
