@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { searchPatients, Patient } from '../services/api.tsx';
 import debounce from 'lodash/debounce';
+import { afficherSexe } from '../services/function.tsx';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -108,7 +109,7 @@ const HomePage: React.FC = () => {
                     {patient.code}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {patient.sexe === 'H' ? 'Homme' : 'Femme'}
+                    {afficherSexe(patient.sexe)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {patient.age ? patient.age + 'ans' : 'N/A'}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getPatientByCode, getPatientBilans, Patient, Bilan } from '../services/api.tsx';
+import { getPatientByCode, getPatientBilansByCode, Patient, Bilan } from '../services/api.tsx';
+import NewBilanModal from '../components/NewBilanModal.tsx';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -8,6 +9,7 @@ const ProfilePage: React.FC = () => {
   const [bilans, setBilans] = useState<Bilan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isNewBilanModalOpen, setIsNewBilanModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -22,7 +24,7 @@ const ProfilePage: React.FC = () => {
         const patientData = await getPatientByCode(patientCode);
         setPatient(patientData);
         
-        const bilansData = await getPatientBilans(patientData.id);
+        const bilansData = await getPatientBilansByCode(patientCode);
         setBilans(bilansData);
       } catch (err) {
         console.error(err);
@@ -56,12 +58,12 @@ const ProfilePage: React.FC = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">PROFIL PATIENT</h1>
         <div className="space-x-4">
-          <Link
-            to="/nouveau-bilan"
+          <button
+            onClick={() => setIsNewBilanModalOpen(true)}
             className="inline-flex items-center px-4 py-2 bg-[#464E77] text-white rounded-md hover:bg-[#363c5d] transition-colors"
           >
             Nouveau Bilan
-          </Link>
+          </button>
           <Link
             to="/dernier-bilan"
             className="inline-flex items-center px-4 py-2 border border-[#464E77] text-[#464E77] rounded-md hover:bg-gray-50 transition-colors"
@@ -150,10 +152,10 @@ const ProfilePage: React.FC = () => {
               {bilans.map((bilan) => (
                 <tr key={bilan.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {bilan.numero}
+                    {bilan.code_labo}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {bilan.date_enregistrement}
+                    {bilan.save_at}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -166,7 +168,7 @@ const ProfilePage: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <Link
-                      to={`/bilan/${bilan.numero}`}
+                      to={`/bilan/${bilan.num_facture}`}
                       className="text-[#464E77] hover:text-[#363c5d] transition-colors"
                     >
                       Afficher Les Détails
@@ -185,6 +187,12 @@ const ProfilePage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <NewBilanModal
+        isOpen={isNewBilanModalOpen}
+        onClose={() => setIsNewBilanModalOpen(false)}
+        patientName={patient.nom}
+      />
     </div>
   );
 };

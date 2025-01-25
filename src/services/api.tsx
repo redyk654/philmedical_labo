@@ -15,8 +15,11 @@ export interface Patient {
 
 export interface Bilan {
   id: number;
-  numero: string;
-  date_enregistrement: string;
+  prescripteur_id: number;
+  num_facture: string;
+  code_labo: string;
+  service_id: number;
+  save_at: string;
   status: 'Complété' | 'Incomplet';
 }
 
@@ -50,9 +53,9 @@ export const getPatientByCode = async (code: string): Promise<Patient> => {
   }
 };
 
-export const getPatientBilans = async (patientId: number): Promise<Bilan[]> => {
+export const getPatientBilansByCode = async (code: string): Promise<Bilan[]> => {
   try {
-    const response = await authenticatedFetch(`get_patient_bilans.php?patient_id=${patientId}`);
+    const response = await authenticatedFetch(`/get_patient_bilans_by_code.php?code=${encodeURIComponent(code)}`);
     if (!response.ok) {
       throw new Error('Failed to fetch patient bilans');
     }
