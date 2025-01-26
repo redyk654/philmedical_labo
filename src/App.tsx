@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage.tsx';
 import ProfilePage from './pages/ProfilePage.tsx';
 import EditProfilePage from './pages/EditProfilePage.tsx';
 import { isAuthenticated } from './services/auth.tsx';
+import ConfigurationsPage from './pages/ConfigurationsPage.tsx';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
@@ -41,6 +42,13 @@ function App() {
           <PrivateRoute>
             <HeaderLayout>
               <EditProfilePage />
+            </HeaderLayout>
+          </PrivateRoute>
+        } />
+                <Route path="/configurations" element={
+          <PrivateRoute>
+            <HeaderLayout>
+              <ConfigurationsPage />
             </HeaderLayout>
           </PrivateRoute>
         } />

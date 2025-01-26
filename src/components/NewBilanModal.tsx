@@ -7,17 +7,32 @@ interface NewBilanModalProps {
   patientName: string;
 }
 
+interface ExamRow {
+  type: string;
+  examen: string;
+}
+
 const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientName }) => {
   const [numFacture, setNumFacture] = useState('');
   const [numBilan, setNumBilan] = useState('');
   const [prescripteur, setPrescripteur] = useState('');
+  const [examRows, setExamRows] = useState<ExamRow[]>([
+    { type: 'Serum', examen: 'CRP' },
+    { type: 'Sang total', examen: 'GLUCOSE' }
+  ]);
 
   if (!isOpen) return null;
+
+  const handleTypeChange = (index: number, value: string) => {
+    const newRows = [...examRows];
+    newRows[index].type = value;
+    setExamRows(newRows);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement bilan creation logic
-    console.log('Creating new bilan:', { numFacture, numBilan, prescripteur });
+    console.log('Creating new bilan:', { numFacture, numBilan, prescripteur, examRows });
   };
 
   return (
@@ -30,7 +45,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
               onClick={onClose}
               className="text-gray-400 hover:text-gray-500 transition-colors"
             >
-              <X className="w-6 h-6" />
+              <X className="w-7 h-7" />
             </button>
           </div>
 
@@ -47,8 +62,9 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   id="numFacture"
                   value={numFacture}
                   onChange={(e) => setNumFacture(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition"
                   required
+                  autoComplete='off'
                 />
               </div>
 
@@ -61,8 +77,9 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   id="numBilan"
                   value={numBilan}
                   onChange={(e) => setNumBilan(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition"
                   required
+                  autoComplete='off'
                 />
               </div>
             </div>
@@ -75,7 +92,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                 id="prescripteur"
                 value={prescripteur}
                 onChange={(e) => setPrescripteur(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
                 required
               >
                 <option value="">Sélectionner...</option>
@@ -97,14 +114,21 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap">Serum</td>
-                    <td className="px-6 py-4 whitespace-nowrap">CRP</td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 whitespace-nowrap">Sang total</td>
-                    <td className="px-6 py-4 whitespace-nowrap">GLUCOSE</td>
-                  </tr>
+                  {examRows.map((row, index) => (
+                    <tr key={index}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="text"
+                          value={row.type}
+                          onChange={(e) => handleTypeChange(index, e.target.value)}
+                          className="w-full border-gray-300 rounded-md shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
+                        />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {row.examen}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -112,14 +136,14 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
             <div className="flex space-x-4">
               <button
                 type="submit"
-                className="flex-1 bg-[#464E77] text-white px-4 py-2 rounded-md hover:bg-[#363c5d] transition-colors"
+                className="flex-1 bg-[#464E77] text-white px-4 py-3 rounded-md hover:bg-[#363c5d] transition-colors h-12"
               >
                 ENREGISTRER LE BILAN
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+                className="flex-1 bg-red-500 text-white px-4 py-3 rounded-md hover:bg-red-600 transition-colors h-12"
               >
                 ANNULER
               </button>

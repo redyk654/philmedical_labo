@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Beaker, Home, UserCircle2, Settings, LogOut } from 'lucide-react';
+import { Beaker, Home, UserCircle2, Settings, LogOut, Cog } from 'lucide-react';
 import { logout } from '../services/auth.tsx';
 
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,6 +57,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <Settings className="w-5 h-5" />
                 <span>Editer profil</span>
               </Link>
+              <Link
+                to="/configurations"
+                className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
+                  location.pathname === '/configurations' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
+                }`}
+              >
+                <Cog className="w-5 h-5" />
+                <span>Configurations</span>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors flex items-center space-x-2"
@@ -82,4 +91,4 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-export default Layout;
+export default HeaderLayout;
