@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Save, X } from 'lucide-react';
-
-interface ConfigItem {
-  id: string;
-  nom: string;
-}
+import ConfirmDialog from '../components/ConfirmDialog.tsx';
+import {
+  ConfigItem,
+  getUnits,
+  createUnit,
+  updateUnit,
+  deleteUnit,
+  getSampleTypes,
+  createSampleType,
+  updateSampleType,
+  deleteSampleType,
+  getHospitalServices,
+  createHospitalService,
+  updateHospitalService,
+  deleteHospitalService
+} from '../services/api.tsx';
 
 interface EditingItem {
   id: string;
-  nom: string;
+  designation: string;
   section: 'units' | 'sampleTypes' | 'hospitalServices';
+}
+
+interface DeleteConfirmation {
+  item: ConfigItem;
+  section: string;
 }
 
 const ConfigurationsPage: React.FC = () => {
@@ -20,6 +36,8 @@ const ConfigurationsPage: React.FC = () => {
   const [newItemSection, setNewItemSection] = useState<string | null>(null);
   const [newItemName, setNewItemName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmation | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -27,22 +45,21 @@ const ConfigurationsPage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      // TODO: Implement API calls to fetch data
-      // For now using mock data
-      setUnits([
-        { id: '1', nom: 'mg/dL' },
-        { id: '2', nom: 'mmol/L' }
+      setIsLoading(true);
+      const [unitsData, sampleTypesData, hospitalServicesData] = await Promise.all([
+        getUnits(),
+        getSampleTypes(),
+        getHospitalServices()
       ]);
-      setSampleTypes([
-        { id: '1', nom: 'Sang' },
-        { id: '2', nom: 'Urine' }
-      ]);
-      setHospitalServices([
-        { id: '1', nom: 'Cardiologie' },
-        { id: '2', nom: 'Pédiatrie' }
-      ]);
+      
+      setUnits(unitsData);
+      setSampleTypes(sampleTypesData);
+      setHospitalServices(hospitalServicesData);
+      setError(null);
     } catch (err) {
       setError('Erreur lors du chargement des données');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -54,53 +71,58 @@ const ConfigurationsPage: React.FC = () => {
     if (!editingItem) return;
     
     try {
-      // TODO: Implement API call to update item
-      console.log('Saving:', editingItem);
+      let updatedItem;
       
-      // Update local state
-      const updateState = (items: ConfigItem[]) => 
-        items.map(item => item.id === editingItem.id ? { ...item, nom: editingItem.nom } : item);
-
       switch (editingItem.section) {
         case 'units':
-          setUnits(updateState(units));
+          updatedItem = await updateUnit(editingItem.id, editingItem.designation);
+          setUnits(units.map(item => item.id === updatedItem.id ? updatedItem : item));
           break;
         case 'sampleTypes':
-          setSampleTypes(updateState(sampleTypes));
+          updatedItem = await updateSampleType(editingItem.id, editingItem.designation);
+          setSampleTypes(sampleTypes.map(item => item.id === updatedItem.id ? updatedItem : item));
           break;
         case 'hospitalServices':
-          setHospitalServices(updateState(hospitalServices));
+          updatedItem = await updateHospitalService(editingItem.id, editingItem.designation);
+          setHospitalServices(hospitalServices.map(item => item.id === updatedItem.id ? updatedItem : item));
           break;
       }
 
       setEditingItem(null);
+      setError(null);
     } catch (err) {
       setError('Erreur lors de la sauvegarde');
     }
   };
 
-  const handleDelete = async (item: ConfigItem, section: string) => {
-    try {
-      // TODO: Implement API call to delete item
-      console.log('Deleting:', item);
-      
-      // Update local state
-      const filterState = (items: ConfigItem[]) => 
-        items.filter(i => i.id !== item.id);
+  const handleDeleteClick = (item: ConfigItem, section: string) => {
+    setDeleteConfirmation({ item, section });
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirmation) return;
+    const { item, section } = deleteConfirmation;
+
+    try {
       switch (section) {
         case 'units':
-          setUnits(filterState(units));
+          await deleteUnit(item.id);
+          setUnits(units.filter(i => i.id !== item.id));
           break;
         case 'sampleTypes':
-          setSampleTypes(filterState(sampleTypes));
+          await deleteSampleType(item.id);
+          setSampleTypes(sampleTypes.filter(i => i.id !== item.id));
           break;
         case 'hospitalServices':
-          setHospitalServices(filterState(hospitalServices));
+          await deleteHospitalService(item.id);
+          setHospitalServices(hospitalServices.filter(i => i.id !== item.id));
           break;
       }
+      setError(null);
     } catch (err) {
       setError('Erreur lors de la suppression');
+    } finally {
+      setDeleteConfirmation(null);
     }
   };
 
@@ -108,24 +130,26 @@ const ConfigurationsPage: React.FC = () => {
     if (!newItemSection || !newItemName.trim()) return;
 
     try {
-      // TODO: Implement API call to create item
-      const newItem = { id: Date.now().toString(), nom: newItemName };
-
-      // Update local state
+      let newItem;
+      
       switch (newItemSection) {
         case 'units':
+          newItem = await createUnit(newItemName);
           setUnits([...units, newItem]);
           break;
         case 'sampleTypes':
+          newItem = await createSampleType(newItemName);
           setSampleTypes([...sampleTypes, newItem]);
           break;
         case 'hospitalServices':
+          newItem = await createHospitalService(newItemName);
           setHospitalServices([...hospitalServices, newItem]);
           break;
       }
 
       setNewItemName('');
       setNewItemSection(null);
+      setError(null);
     } catch (err) {
       setError('Erreur lors de la création');
     }
@@ -180,12 +204,12 @@ const ConfigurationsPage: React.FC = () => {
             {editingItem?.id === item.id ? (
               <input
                 type="text"
-                value={editingItem.nom}
-                onChange={(e) => setEditingItem({ ...editingItem, nom: e.target.value })}
+                value={editingItem.designation}
+                onChange={(e) => setEditingItem({ ...editingItem, designation: e.target.value })}
                 className="flex-1 mr-2 h-10 px-3 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
               />
             ) : (
-              <span className="text-gray-700">{item.nom}</span>
+              <span className="text-gray-700">{item.designation}</span>
             )}
             
             <div className="flex items-center space-x-2">
@@ -213,7 +237,7 @@ const ConfigurationsPage: React.FC = () => {
                     <Pencil className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleDelete(item, section)}
+                    onClick={() => handleDeleteClick(item, section)}
                     className="p-2 text-white bg-red-500 rounded-md hover:bg-red-600"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -223,9 +247,22 @@ const ConfigurationsPage: React.FC = () => {
             </div>
           </div>
         ))}
+        {items.length === 0 && (
+          <div className="text-center text-gray-500 py-4">
+            Aucun élément trouvé
+          </div>
+        )}
       </div>
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-gray-600">Chargement...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -242,6 +279,13 @@ const ConfigurationsPage: React.FC = () => {
         {renderSection('Types d\'échantillon', sampleTypes, 'sampleTypes')}
         {renderSection('Services hospitaliers', hospitalServices, 'hospitalServices')}
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteConfirmation !== null}
+        message="Êtes-vous sûr de vouloir supprimer cet élément ?"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteConfirmation(null)}
+      />
     </div>
   );
 };

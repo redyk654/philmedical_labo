@@ -3,7 +3,7 @@ export interface LoginResponse {
   error?: string;
 }
 
-const API_URL = 'http://localhost:8080/';
+const API_URL = 'http://localhost:8080';
 
 export const login = async (username: string, password: string): Promise<void> => {
   try {

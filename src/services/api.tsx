@@ -23,9 +23,14 @@ export interface Bilan {
   status: 'Complété' | 'Incomplet';
 }
 
+export interface ConfigItem {
+  id: string;
+  designation: string;
+}
+
 export const searchPatients = async (searchTerm: string): Promise<Patient[]> => {
   try {
-    const response = await authenticatedFetch(`search_patients.php?q=${encodeURIComponent(searchTerm)}`);
+    const response = await authenticatedFetch(`/search_patients.php?q=${encodeURIComponent(searchTerm)}`);
     if (!response.ok) {
       throw new Error('Echec de la recherche des patients');
     }
@@ -34,7 +39,7 @@ export const searchPatients = async (searchTerm: string): Promise<Patient[]> => 
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error('Une erreur inattendue est survenue');
+    throw new Error('Serveur indisponible');
   }
 };
 
@@ -42,14 +47,14 @@ export const getPatientByCode = async (code: string): Promise<Patient> => {
   try {
     const response = await authenticatedFetch(`/get_patient.php?code=${encodeURIComponent(code)}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch patient details');
+      throw new Error('Echec de la recherche du patient');
     }
     return response.json();
   } catch (error) {
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error('An unexpected error occurred');
+    throw new Error('Serveur indisponible');
   }
 };
 
@@ -67,3 +72,61 @@ export const getPatientBilansByCode = async (code: string): Promise<Bilan[]> => 
     throw new Error('An unexpected error occurred');
   }
 };
+
+// ConfigurationPage endpoints
+const fetchConfigItems = async (endpoint: string): Promise<ConfigItem[]> => {
+  const response = await authenticatedFetch(endpoint);
+  if (!response.ok) {
+    throw new Error('Failed to fetch items');
+  }
+  return response.json();
+};
+
+const createConfigItem = async (endpoint: string, designation: string): Promise<ConfigItem> => {
+  const response = await authenticatedFetch(endpoint, {
+    method: 'POST',
+    body: JSON.stringify({ designation })
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create item');
+  }
+  return response.json();
+};
+
+const updateConfigItem = async (endpoint: string, id: string, designation: string): Promise<ConfigItem> => {
+  const response = await authenticatedFetch(`${endpoint}?id=${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ designation })
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update item');
+  }
+  return response.json();
+};
+
+const deleteConfigItem = async (endpoint: string, id: string): Promise<void> => {
+  const response = await authenticatedFetch(`${endpoint}?id=${id}`, {
+    method: 'DELETE'
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete item');
+  }
+};
+
+// Units
+export const getUnits = () => fetchConfigItems('/units.php');
+export const createUnit = (designation: string) => createConfigItem('/units.php', designation);
+export const updateUnit = (id: string, designation: string) => updateConfigItem('/units.php', id, designation);
+export const deleteUnit = (id: string) => deleteConfigItem('/units.php', id);
+
+// Sample Types
+export const getSampleTypes = () => fetchConfigItems('/types_echantillon.php');
+export const createSampleType = (designation: string) => createConfigItem('/types_echantillon.php', designation);
+export const updateSampleType = (id: string, designation: string) => updateConfigItem('/types_echantillon.php', id, designation);
+export const deleteSampleType = (id: string) => deleteConfigItem('/types_echantillon.php', id);
+
+// Hospital Services
+export const getHospitalServices = () => fetchConfigItems('/hospital_services.php');
+export const createHospitalService = (designation: string) => createConfigItem('/hospital_services.php', designation);
+export const updateHospitalService = (id: string, designation: string) => updateConfigItem('/hospital_services.php', id, designation);
+export const deleteHospitalService = (id: string) => deleteConfigItem('/hospital_services.php', id);
