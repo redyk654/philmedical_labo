@@ -7,7 +7,7 @@ const API_URL = 'http://localhost:8080';
 
 export const login = async (username: string, password: string): Promise<void> => {
   try {
-    const response = await fetch(`${API_URL}connexion_labo.php`, {
+    const response = await fetch(`${API_URL}/connexion_labo.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

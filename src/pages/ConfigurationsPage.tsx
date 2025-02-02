@@ -20,7 +20,6 @@ import {
 interface EditingItem {
   id: string;
   designation: string;
-  section: 'units' | 'sampleTypes' | 'hospitalServices';
 }
 
 interface DeleteConfirmation {
@@ -32,7 +31,12 @@ const ConfigurationsPage: React.FC = () => {
   const [units, setUnits] = useState<ConfigItem[]>([]);
   const [sampleTypes, setSampleTypes] = useState<ConfigItem[]>([]);
   const [hospitalServices, setHospitalServices] = useState<ConfigItem[]>([]);
-  const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
+  
+  // Separate editing states for each section
+  const [editingUnit, setEditingUnit] = useState<EditingItem | null>(null);
+  const [editingSampleType, setEditingSampleType] = useState<EditingItem | null>(null);
+  const [editingHospitalService, setEditingHospitalService] = useState<EditingItem | null>(null);
+  
   const [newItemSection, setNewItemSection] = useState<string | null>(null);
   const [newItemName, setNewItemName] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -63,32 +67,52 @@ const ConfigurationsPage: React.FC = () => {
     }
   };
 
-  const handleEdit = (item: ConfigItem, section: EditingItem['section']) => {
-    setEditingItem({ ...item, section });
+  const handleEdit = (item: ConfigItem, section: string) => {
+    const editingItem = { id: item.id, designation: item.designation };
+    switch (section) {
+      case 'units':
+        setEditingUnit(editingItem);
+        setEditingSampleType(null);
+        setEditingHospitalService(null);
+        break;
+      case 'sampleTypes':
+        setEditingSampleType(editingItem);
+        setEditingUnit(null);
+        setEditingHospitalService(null);
+        break;
+      case 'hospitalServices':
+        setEditingHospitalService(editingItem);
+        setEditingUnit(null);
+        setEditingSampleType(null);
+        break;
+    }
   };
 
-  const handleSave = async () => {
-    if (!editingItem) return;
-    
+  const handleSave = async (section: string) => {
     try {
       let updatedItem;
       
-      switch (editingItem.section) {
+      switch (section) {
         case 'units':
-          updatedItem = await updateUnit(editingItem.id, editingItem.designation);
+          if (!editingUnit) return;
+          updatedItem = await updateUnit(editingUnit.id, editingUnit.designation);
           setUnits(units.map(item => item.id === updatedItem.id ? updatedItem : item));
+          setEditingUnit(null);
           break;
         case 'sampleTypes':
-          updatedItem = await updateSampleType(editingItem.id, editingItem.designation);
+          if (!editingSampleType) return;
+          updatedItem = await updateSampleType(editingSampleType.id, editingSampleType.designation);
           setSampleTypes(sampleTypes.map(item => item.id === updatedItem.id ? updatedItem : item));
+          setEditingSampleType(null);
           break;
         case 'hospitalServices':
-          updatedItem = await updateHospitalService(editingItem.id, editingItem.designation);
+          if (!editingHospitalService) return;
+          updatedItem = await updateHospitalService(editingHospitalService.id, editingHospitalService.designation);
           setHospitalServices(hospitalServices.map(item => item.id === updatedItem.id ? updatedItem : item));
+          setEditingHospitalService(null);
           break;
       }
 
-      setEditingItem(null);
       setError(null);
     } catch (err) {
       setError('Erreur lors de la sauvegarde');
@@ -155,7 +179,48 @@ const ConfigurationsPage: React.FC = () => {
     }
   };
 
-  const renderSection = (title: string, items: ConfigItem[], section: EditingItem['section']) => (
+  const getEditingState = (section: string, item: ConfigItem) => {
+    switch (section) {
+      case 'units':
+        return editingUnit?.id === item.id ? editingUnit : null;
+      case 'sampleTypes':
+        return editingSampleType?.id === item.id ? editingSampleType : null;
+      case 'hospitalServices':
+        return editingHospitalService?.id === item.id ? editingHospitalService : null;
+      default:
+        return null;
+    }
+  };
+
+  const handleEditingChange = (value: string, section: string) => {
+    switch (section) {
+      case 'units':
+        editingUnit && setEditingUnit({ ...editingUnit, designation: value });
+        break;
+      case 'sampleTypes':
+        editingSampleType && setEditingSampleType({ ...editingSampleType, designation: value });
+        break;
+      case 'hospitalServices':
+        editingHospitalService && setEditingHospitalService({ ...editingHospitalService, designation: value });
+        break;
+    }
+  };
+
+  const cancelEditing = (section: string) => {
+    switch (section) {
+      case 'units':
+        setEditingUnit(null);
+        break;
+      case 'sampleTypes':
+        setEditingSampleType(null);
+        break;
+      case 'hospitalServices':
+        setEditingHospitalService(null);
+        break;
+    }
+  };
+
+  const renderSection = (title: string, items: ConfigItem[], section: string) => (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
@@ -196,57 +261,61 @@ const ConfigurationsPage: React.FC = () => {
       )}
 
       <div className="space-y-2">
-        {items.map(item => (
-          <div
-            key={item.id}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
-          >
-            {editingItem?.id === item.id ? (
-              <input
-                type="text"
-                value={editingItem.designation}
-                onChange={(e) => setEditingItem({ ...editingItem, designation: e.target.value })}
-                className="flex-1 mr-2 h-10 px-3 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
-              />
-            ) : (
-              <span className="text-gray-700">{item.designation}</span>
-            )}
-            
-            <div className="flex items-center space-x-2">
-              {editingItem?.id === item.id ? (
-                <>
-                  <button
-                    onClick={handleSave}
-                    className="p-2 text-white bg-green-500 rounded-md hover:bg-green-600"
-                  >
-                    <Save className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setEditingItem(null)}
-                    className="p-2 text-white bg-gray-500 rounded-md hover:bg-gray-600"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </>
+        {items.map(item => {
+          const editingState = getEditingState(section, item);
+          
+          return (
+            <div
+              key={item.id}
+              className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
+            >
+              {editingState ? (
+                <input
+                  type="text"
+                  value={editingState.designation}
+                  onChange={(e) => handleEditingChange(e.target.value, section)}
+                  className="flex-1 mr-2 h-10 px-3 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
+                />
               ) : (
-                <>
-                  <button
-                    onClick={() => handleEdit(item, section)}
-                    className="p-2 text-white bg-[#464E77] rounded-md hover:bg-[#363c5d]"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(item, section)}
-                    className="p-2 text-white bg-red-500 rounded-md hover:bg-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </>
+                <span className="text-gray-700">{item.designation}</span>
               )}
+              
+              <div className="flex items-center space-x-2">
+                {editingState ? (
+                  <>
+                    <button
+                      onClick={() => handleSave(section)}
+                      className="p-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+                    >
+                      <Save className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => cancelEditing(section)}
+                      className="p-2 text-white bg-gray-500 rounded-md hover:bg-gray-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleEdit(item, section)}
+                      className="p-2 text-white bg-[#464E77] rounded-md hover:bg-[#363c5d]"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(item, section)}
+                      className="p-2 text-white bg-red-500 rounded-md hover:bg-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {items.length === 0 && (
           <div className="text-center text-gray-500 py-4">
             Aucun élément trouvé
