@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { authenticatedFetch } from '../services/auth.tsx';
+import { extraireCode } from '../services/function.tsx';
+import { CategorieExamen, checkBilanExists, checkInvoice, createBilan, getExaminationCategories, getPrescribers, getSpecificConditions, Prescripteur, SpecificCondition } from '../services/api.tsx';
 
 interface NewBilanModalProps {
   isOpen: boolean;
   onClose: () => void;
   patientName: string;
+  patientCode: string;
+  patientSexe: string;
+  patientAge: number;
 }
 
 interface Invoice {
@@ -29,10 +34,12 @@ interface Service {
   designation: string;
 }
 
-const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientName }) => {
+const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientName, patientCode, patientAge, patientSexe }) => {
   const [numFacture, setNumFacture] = useState('');
   const [numBilan, setNumBilan] = useState('');
   const [prescripteur, setPrescripteur] = useState('');
+  const [specificCondition, setSpecificCondition] = useState('');
+  const [categorie, setCategorie] = useState('');
   const [examRows, setExamRows] = useState<Examination[]>([]);
   const [invoiceSuggestions, setInvoiceSuggestions] = useState<Invoice[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +50,22 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
   const [searchTerm, setSearchTerm] = useState('');
   const [sampleTypeSuggestions, setSampleTypeSuggestions] = useState<SampleType[]>([]);
   const [serviceSuggestions, setServiceSuggestions] = useState<Service[]>([]);
+
+  const [prescripteurs, setPrescripteurs] = useState<Prescripteur[]>([]);
+  const [specificConditions, setSpecificConditions] = useState<SpecificCondition[]>([]);
+  const [categories, setCategories] = useState<CategorieExamen[]>([]);
+
+  useEffect(() => {
+    const fetchMetaData = async () => {
+      const data = await getPrescribers();
+      setPrescripteurs(data);
+      const data2 = await getSpecificConditions();
+      setSpecificConditions(data2);
+      const data3 = await getExaminationCategories();
+      setCategories(data3);
+    };
+    fetchMetaData();
+  }, []);
 
   useEffect(() => {
     if (numFacture.length >= 2) {
@@ -161,10 +184,57 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement bilan creation logic
-    console.log('Creating new bilan:', { numFacture, numBilan, prescripteur, examRows });
+    setError(null);
+
+    try {
+      // Check if invoice exists
+      const invoiceExists = await checkInvoice(numFacture);
+      
+      if (!invoiceExists) {
+        setError("Numéro de facture invalide");
+        return;
+      }
+
+      // Check if bilan already exists
+      const bilanExists = await checkBilanExists(numFacture);
+      if (bilanExists) {
+        setError("Un bilan existe déjà pour cette facture");
+        return;
+      }
+
+      // Validate required fields
+      if (!numFacture || !prescripteur || examRows.length === 0) {
+        setError("Veuillez remplir tous les champs obligatoires");
+        return;
+      }
+
+      // Create bilan
+      const data = {
+        num_facture: numFacture,
+        code_labo: !numBilan ? null : numBilan,
+        code_patient: patientCode,
+        prescripteur_id: prescripteur,
+        specific_condition_id: !specificCondition ? null : specificCondition,
+        categorie_id: categorie,
+        examens: examRows
+      };
+      console.log(data);
+      
+      const bilan = await createBilan(data);
+      console.log(bilan);
+
+      // Close modal and reset form
+      onClose();
+      setNumFacture('');
+      setNumBilan('');
+      setPrescripteur('');
+      setExamRows([]);
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+    }
   };
 
   const cancelBilan = () => {
@@ -187,7 +257,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
               onClick={() => handleSampleTypeSelect(type)}
               className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:outline-none"
             >
-              {type.designation}
+              {extraireCode(type.designation)}
             </button>
           ))}
         </div>
@@ -204,7 +274,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
               onClick={() => handleServiceSelect(service)}
               className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:outline-none"
             >
-              {service.designation}
+              {extraireCode(service.designation)}
             </button>
           ))}
         </div>
@@ -236,13 +306,15 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
             </div>
           )}
 
-          <p className="text-lg text-gray-700">{patientName}</p>
+          <p className="text-lg text-gray-700">
+            Patient: {patientName} - {patientAge} ans - {patientSexe === 'H' ? 'Homme' : 'Femme'}
+          </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
                 <label htmlFor="numFacture" className="block text-sm font-medium text-gray-700">
-                  N° Facture
+                  N° Facture <span className=' text-red-500'>*</span>
                 </label>
                 <input
                   type="text"
@@ -271,7 +343,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
 
               <div>
                 <label htmlFor="numBilan" className="block text-sm font-medium text-gray-700">
-                  N° Bilan
+                  Code Labo
                 </label>
                 <input
                   type="text"
@@ -279,15 +351,32 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   value={numBilan}
                   onChange={(e) => setNumBilan(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition"
-                  required
                   autoComplete='off'
                 />
               </div>
             </div>
-
+            <div>
+              <label htmlFor="Categorie" className="block text-sm font-medium text-gray-700">
+                Selectionner Categorie<span className=' text-red-500'>*</span>
+              </label>
+              <select
+                id="Categorie"
+                value={categorie}
+                onChange={(e) => setCategorie(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
+                required
+              >
+                <option value="">Sélectionner...</option>
+                {categories.map((categorie) => (
+                  <option key={categorie.id} value={categorie.id}>
+                    {categorie.designation}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div>
               <label htmlFor="prescripteur" className="block text-sm font-medium text-gray-700">
-                Selectionner Prescripteur
+                Selectionner Prescripteur <span className=' text-red-500'>*</span>
               </label>
               <select
                 id="prescripteur"
@@ -297,8 +386,29 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                 required
               >
                 <option value="">Sélectionner...</option>
-                <option value="1">Dr. John Doe</option>
-                <option value="2">Dr. Jane Smith</option>
+                {prescripteurs.map((prescripteur) => (
+                  <option key={prescripteur.id} value={prescripteur.id}>
+                    {prescripteur.designation}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="SpecifiCondition" className="block text-sm font-medium text-gray-700">
+                Selectionner Condition Spécifique
+              </label>
+              <select
+                id="SpecifiCondition"
+                value={specificCondition}
+                onChange={(e) => setSpecificCondition(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
+              >
+                <option value="">Sélectionner...</option>
+                {specificConditions.map((condition) => (
+                  <option key={condition.id} value={condition.id}>
+                    {condition.designation}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -417,17 +527,17 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
             <div className="sticky bottom-0 bg-white pt-6 mt-auto">
               <div className="flex space-x-4">
                 <button
-                  type="submit"
-                  className="flex-1 bg-[#464E77] text-white px-4 py-3 rounded-md hover:bg-[#363c5d] transition-colors h-12"
-                >
-                  ENREGISTRER LE BILAN
-                </button>
-                <button
                   type="button"
                   onClick={cancelBilan}
                   className="flex-1 bg-red-500 text-white px-4 py-3 rounded-md hover:bg-red-600 transition-colors h-12"
                 >
                   ANNULER
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-[#464E77] text-white px-4 py-3 rounded-md hover:bg-[#363c5d] transition-colors h-12"
+                >
+                  ENREGISTRER LE BILAN
                 </button>
               </div>
             </div>

@@ -94,6 +94,15 @@ const ExaminationReferencesPage: React.FC = () => {
     }
   };
 
+  // const fetchSpecificConditions = async () => {
+  //   try {
+  //     const conditions = await getSpecificConditions();
+  //     setSpecificConditions(conditions);
+  //   } catch (err) {
+  //     setError('Erreur lors du chargement des conditions spécifiques');
+  //   }
+  // }
+
   const fetchReferenceValues = async (examId: string) => {
     try {
       const values = await getReferenceValues(examId);
@@ -304,13 +313,18 @@ const ExaminationReferencesPage: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Condition spécifique
                       </label>
-                      <input
-                        type="text"
+                      <select
                         value={newReference.specific_condition}
                         onChange={(e) => setNewReference({ ...newReference, specific_condition: e.target.value })}
                         className="w-full rounded-md border border-gray-300 shadow-sm px-4 py-2"
-                        placeholder="Nouvelle condition..."
-                      />
+                      >
+                        <option value="">Aucune</option>
+                        {specificConditions.map((condition) => (
+                          <option key={condition.id} value={condition.id}>
+                            {condition.designation}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <div className="mt-4 flex justify-end space-x-3">

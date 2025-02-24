@@ -13,12 +13,19 @@ export interface Patient {
   situation_matrimoniale?: string;
 }
 
+export interface Invoice {
+  id: string;
+  numero: string;
+}
+
 export interface Bilan {
   id: number;
   prescripteur_id: number;
   num_facture: string;
-  code_labo: string;
-  service_id: number;
+  code_labo: string | null;
+  code_patient: string;
+  categorie_id: number;
+  specific_condition_id: number | null;
   save_at: string;
   status: 'Complété' | 'Incomplet';
 }
@@ -49,6 +56,16 @@ export interface ReferenceValue {
 }
 
 export interface SpecificCondition {
+  id: string;
+  designation: string;
+}
+
+export interface CategorieExamen {
+  id: string;
+  designation: string;
+}
+
+export interface Prescripteur {
   id: string;
   designation: string;
 }
@@ -227,4 +244,57 @@ export const deleteReferenceValue = async (id: string): Promise<void> => {
   if (!response.ok) {
     throw new Error('Echec de la suppression de la valeur de référence');
   }
+};
+
+// Get all examination categories
+export const getExaminationCategories = async (): Promise<CategorieExamen[]> => {
+  const response = await authenticatedFetch('/get_examination_categories.php');
+  if (!response.ok) {
+    throw new Error('Echec de la récupération des catégories d\'examen');
+  }
+  return response.json();
+}
+
+// Get all prescribers
+export const getPrescribers = async (): Promise<Prescripteur[]> => {
+  const response = await authenticatedFetch('/get_prescribers.php');
+  if (!response.ok) {
+    throw new Error('Failed to fetch prescribers');
+  }
+  return response.json();
+}
+
+
+// Check if invoice exists
+export const checkInvoice = async (invoiceNumber: string): Promise<boolean> => {
+  const response = await authenticatedFetch(`/check_invoice.php?numero=${invoiceNumber}`);
+  if (!response.ok) {
+    throw new Error('Failed to check invoice');
+  }
+  const data = await response.json();
+  return data.exists;
+};
+
+// Check if bilan exists for invoice
+export const checkBilanExists = async (invoiceNumber: string): Promise<boolean> => {
+  const response = await authenticatedFetch(`/check_bilan.php?invoice=${invoiceNumber}`);
+  if (!response.ok) {
+    throw new Error('Failed to check bilan');
+  }
+  const data = await response.json();
+  return data.exists;
+};
+
+// Create new bilan
+export const createBilan = async (data): Promise<Bilan> => {
+  const response = await authenticatedFetch('/create_bilan.php', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to create bilan');
+  }
+  
+  return response.json();
 };

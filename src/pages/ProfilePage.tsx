@@ -192,6 +192,9 @@ const ProfilePage: React.FC = () => {
         isOpen={isNewBilanModalOpen}
         onClose={() => setIsNewBilanModalOpen(false)}
         patientName={patient.nom}
+        patientCode={patient.code}
+        patientSexe={patient.sexe}
+        patientAge={patient.age}
       />
     </div>
   );
