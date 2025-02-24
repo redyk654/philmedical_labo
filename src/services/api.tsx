@@ -27,7 +27,7 @@ export interface Bilan {
   categorie_id: number;
   specific_condition_id: number | null;
   save_at: string;
-  status: 'Complété' | 'Incomplet';
+  statut: 'Complété' | 'Incomplet';
 }
 
 export interface ConfigItem {
