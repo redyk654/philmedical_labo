@@ -80,6 +80,37 @@ export interface NewReferenceValue {
   id_specific_condition: string | null;
 }
 
+export interface BilanDetail {
+  id: string;
+  designation_examen: string;
+  resultat: string | null;
+  commentaire: string | null;
+  valeur_reference: string | null;
+}
+
+export interface BilanDetails {
+  id: string;
+  num_facture: string;
+  code_labo: string;
+  prescripteur: {
+    id: string;
+    designation: string;
+  };
+  categorie: {
+    id: string;
+    designation: string;
+  };
+  specific_condition: {
+    id: string;
+    designation: string;
+  } | null;
+  examens: BilanDetail[];
+  commentaire: string | null;
+  save_at: string;
+  update_at: string;
+  statut: string;
+}
+
 export const searchPatients = async (searchTerm: string): Promise<Patient[]> => {
   try {
     const response = await authenticatedFetch(`/search_patients.php?q=${encodeURIComponent(searchTerm)}`);
@@ -297,4 +328,33 @@ export const createBilan = async (data): Promise<Bilan> => {
   }
   
   return response.json();
+};
+
+// Get bilan details
+export const getBilanDetails = async (numFacture: string): Promise<BilanDetails> => {
+  const response = await authenticatedFetch(`/get_bilan_details.php?num_facture=${numFacture}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch bilan details');
+  }
+  return response.json();
+};
+
+// Update examination result
+export const updateExaminationResult = async (
+  examinationId: string,
+  result: string,
+  comment: string | null = null
+): Promise<void> => {
+  const response = await authenticatedFetch('/update_examination_result.php', {
+    method: 'POST',
+    body: JSON.stringify({
+      examination_id: examinationId,
+      result,
+      comment
+    })
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to update examination result');
+  }
 };

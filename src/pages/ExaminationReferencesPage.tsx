@@ -283,7 +283,7 @@ const ExaminationReferencesPage: React.FC = () => {
                         className="w-full rounded-md border border-gray-300 shadow-sm px-4 py-2"
                       >
                         <option value="">Tous</option>
-                        <option value="M">Homme</option>
+                        <option value="H">Homme</option>
                         <option value="F">Femme</option>
                       </select>
                     </div>
@@ -363,7 +363,7 @@ const ExaminationReferencesPage: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap">{value.min_value}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{value.max_value || '-'}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {value.sexe === 'M' ? 'Homme' : value.sexe === 'F' ? 'Femme' : 'Tous'}
+                          {value.sexe === 'H' ? 'Homme' : value.sexe === 'F' ? 'Femme' : 'Tous'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">{value.min_age || '-'}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{value.max_age || '-'}</td>

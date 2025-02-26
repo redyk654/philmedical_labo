@@ -6,7 +6,7 @@ export const afficherSexe = (sexe: string) => {
     }
 };
 
-export function extraireCode (designation) {
+export function extraireCode(designation: string): string {
     let designation_extrait = '';
     const codes = ['RX ', 'LAB ', 'MA ', 'MED ', 'CHR ', 'CO ', 'UPEC ', 'SP ', 'CA '];
 
@@ -21,4 +21,15 @@ export function extraireCode (designation) {
     if (designation_extrait === '') designation_extrait = designation;
 
     return designation_extrait.toUpperCase();
+}
+
+export function convertDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }

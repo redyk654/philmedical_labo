@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getPatientByCode, getPatientBilansByCode, Patient, Bilan } from '../services/api.tsx';
 import NewBilanModal from '../components/NewBilanModal.tsx';
+import BilanDetailsModal from '../components/BilanDetailsModal.tsx';
+import { convertDate } from '../services/function.tsx';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,6 +12,7 @@ const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isNewBilanModalOpen, setIsNewBilanModalOpen] = useState(false);
+  const [selectedBilan, setSelectedBilan] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -155,7 +158,7 @@ const ProfilePage: React.FC = () => {
                     {bilan.code_labo}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {bilan.save_at}
+                    {convertDate(bilan.save_at)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -167,12 +170,12 @@ const ProfilePage: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Link
-                      to={`/bilan/${bilan.num_facture}`}
+                    <button
+                      onClick={() => setSelectedBilan(bilan.num_facture)}
                       className="text-[#464E77] hover:text-[#363c5d] transition-colors"
                     >
                       Afficher Les Détails
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -196,6 +199,17 @@ const ProfilePage: React.FC = () => {
         patientSexe={patient.sexe}
         patientAge={patient.age}
       />
+
+      {selectedBilan && (
+        <BilanDetailsModal
+          isOpen={true}
+          onClose={() => setSelectedBilan(null)}
+          numFacture={selectedBilan}
+          patientName={patient.nom}
+          patientAge={patient.age}
+          patientSexe={patient.sexe}
+        />
+      )}
     </div>
   );
 };
