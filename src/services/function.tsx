@@ -33,3 +33,11 @@ export function convertDate(dateString: string): string {
         minute: '2-digit'
     });
 }
+
+export function formatDate(date: Date): string {
+    return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
