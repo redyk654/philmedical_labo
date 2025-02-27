@@ -140,13 +140,14 @@ const ExaminationReferencesPage: React.FC = () => {
         designation: examinations.find(exam => parseInt(exam.id) === parseInt(selectedExam))?.designation || '',
         min_value: parseFloat(newReference.min_value),
         max_value: newReference.max_value ? parseFloat(newReference.max_value) : null,
-        unite: newReference.unite,
+        unite_id: newReference.unite,
         sexe: newReference.sexe || null,
         min_age: newReference.min_age ? parseInt(newReference.min_age) : null,
         max_age: newReference.max_age ? parseInt(newReference.max_age) : null,
         id_specific_condition: newReference.specific_condition || null,
       };
-
+      console.log(referenceValue);
+      
       await createReferenceValue(referenceValue);
       await fetchReferenceValues(selectedExam);
       setIsAddingReference(false);

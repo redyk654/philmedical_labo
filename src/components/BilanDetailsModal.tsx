@@ -79,7 +79,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-lg w-full max-w-6xl mx-4 max-h-[90vh] flex flex-col">
         <div className="p-6 flex-1 overflow-y-auto">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">DÉTAILS DU BILAN</h2>
@@ -136,6 +136,8 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                 </div>
               </div>
 
+
+
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Examens</h3>
                 <div className="overflow-x-auto">
@@ -190,7 +192,6 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                   </table>
                 </div>
               </div>
-
               <div className="mt-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Commentaires</h3>
                 <textarea
