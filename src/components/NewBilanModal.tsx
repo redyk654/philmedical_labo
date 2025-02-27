@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { authenticatedFetch } from '../services/auth.tsx';
 import { extraireCode } from '../services/function.tsx';
-import { CategorieExamen, checkBilanExists, checkInvoice, createBilan, getExaminationCategories, getPrescribers, getSpecificConditions, Prescripteur, SpecificCondition } from '../services/api.tsx';
+import { CategorieExamen, checkBilanExists, checkInvoice, createBilan, getExaminationCategories, getPrescribers, getSampleTypes, getSpecificConditions, Prescripteur, SpecificCondition } from '../services/api.tsx';
 
 interface NewBilanModalProps {
   isOpen: boolean;
@@ -40,6 +40,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
   const [prescripteur, setPrescripteur] = useState('');
   const [specificCondition, setSpecificCondition] = useState('');
   const [categorie, setCategorie] = useState('');
+  const [typeEchantillon, setTypeEchantillon] = useState('');
   const [examRows, setExamRows] = useState<Examination[]>([]);
   const [invoiceSuggestions, setInvoiceSuggestions] = useState<Invoice[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +55,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
   const [prescripteurs, setPrescripteurs] = useState<Prescripteur[]>([]);
   const [specificConditions, setSpecificConditions] = useState<SpecificCondition[]>([]);
   const [categories, setCategories] = useState<CategorieExamen[]>([]);
+  const [typeEchantillons, setTypeEchantillons] = useState<SampleType[]>([]);
 
   useEffect(() => {
     const fetchMetaData = async () => {
@@ -63,6 +65,8 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
       setSpecificConditions(data2);
       const data3 = await getExaminationCategories();
       setCategories(data3);
+      const data4 = await getSampleTypes();
+      setTypeEchantillons(data4);
     };
     fetchMetaData();
   }, []);
@@ -218,6 +222,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
         prescripteur_id: prescripteur,
         specific_condition_id: !specificCondition ? null : specificCondition,
         categorie_id: categorie,
+        type_echantillon_id: typeEchantillon,
         examens: examRows
       };
       console.log(data);
@@ -375,6 +380,25 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
               </select>
             </div>
             <div>
+              <label htmlFor="echantillon" className="block text-sm font-medium text-gray-700">
+                Selectionner Nature échantillon<span className=' text-red-500'>*</span>
+              </label>
+              <select
+                id="echantillon"
+                value={typeEchantillon}
+                onChange={(e) => setTypeEchantillon(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
+                required
+              >
+                <option value="">Sélectionner...</option>
+                {typeEchantillons.map((echantillon) => (
+                  <option key={echantillon.id} value={echantillon.id}>
+                    {echantillon.designation}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label htmlFor="prescripteur" className="block text-sm font-medium text-gray-700">
                 Selectionner Prescripteur <span className=' text-red-500'>*</span>
               </label>
@@ -429,9 +453,6 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                        Type d'échantillon
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         Examen
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -442,33 +463,6 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   <tbody className="bg-white divide-y divide-gray-200">
                     {examRows.map((row, index) => (
                       <tr key={index} className="relative"> {/* Added relative positioning */}
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="relative">
-                            {editingRow === index && editingField === 'type' ? (
-                              <div className="relative">
-                                <input
-                                  type="text"
-                                  value={searchTerm}
-                                  onChange={(e) => setSearchTerm(e.target.value)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
-                                  placeholder="Rechercher..."
-                                  autoFocus
-                                />
-                                <div className="absolute left-0 right-0 mt-1"> {/* Container for suggestions */}
-                                  {renderSuggestions()}
-                                </div>
-                              </div>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => startEditing(index, 'type')}
-                                className="w-full text-left hover:text-[#464E77]"
-                              >
-                                {row.type_echantillon || 'Cliquez pour éditer'}
-                              </button>
-                            )}
-                          </div>
-                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="relative">
                             {editingRow === index && editingField === 'exam' ? (

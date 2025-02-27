@@ -112,8 +112,8 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Prescripteur</h3>
-                    <p className="mt-1">{bilanDetails.prescripteur.designation}</p>
+                    <h3 className="text-sm font-medium text-gray-500">N° Facture</h3>
+                    <p className="mt-1">{bilanDetails.num_facture}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Catégorie</h3>
@@ -122,16 +122,16 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">N° Facture</h3>
-                    <p className="mt-1">{bilanDetails.num_facture}</p>
+                    <h3 className="text-sm font-medium text-gray-500">Prescripteur</h3>
+                    <p className="mt-1">{bilanDetails.prescripteur.designation}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Code Labo</h3>
                     <p className="mt-1">{bilanDetails.code_labo || 'N/A'}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">Date d'enregistrement</h3>
-                    <p className="mt-1">{convertDate(bilanDetails.save_at)}</p>
+                    <h3 className="text-sm font-medium text-gray-500">Nature échantillon</h3>
+                    <p className="mt-1">{bilanDetails.type_echantillon.designation || 'N/A'}</p>
                   </div>
                 </div>
               </div>
@@ -164,7 +164,8 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                           </td>
                           <td className="px-6 py-4">
                             <input
-                              type="text"
+                              type="number"
+                              step="0.01"
                               value={editedResults[exam.id] || ''}
                               onChange={(e) => handleResultChange(exam.id, e.target.value)}
                               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"

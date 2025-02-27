@@ -100,6 +100,10 @@ export interface BilanDetails {
     id: string;
     designation: string;
   };
+  type_echantillon: {
+    id: string;
+    designation: string;
+  };
   specific_condition: {
     id: string;
     designation: string;
