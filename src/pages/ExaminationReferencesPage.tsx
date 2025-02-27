@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, AlertCircle, Search } from 'lucide-react';
 import ConfirmDialog from '../components/ConfirmDialog.tsx';
-import { getExaminations, getReferenceValues, getSpecificConditions, createSpecificCondition, createReferenceValue, deleteReferenceValue } from '../services/api.tsx';
+import { getExaminations, getReferenceValues, getSpecificConditions, createSpecificCondition, createReferenceValue, deleteReferenceValue, getUnits } from '../services/api.tsx';
 import { extraireCode } from '../services/function.tsx';
 
 interface Examination {
@@ -29,6 +29,11 @@ interface SpecificCondition {
   designation: string;
 }
 
+interface Unit {
+  id: string;
+  designation: string;
+}
+
 interface NewReferenceValue {
   min_value: string;
   max_value: string;
@@ -36,6 +41,7 @@ interface NewReferenceValue {
   min_age: string;
   max_age: string;
   specific_condition: string;
+  unite: string;
 }
 
 const ExaminationReferencesPage: React.FC = () => {
@@ -45,6 +51,7 @@ const ExaminationReferencesPage: React.FC = () => {
   const [selectedExam, setSelectedExam] = useState<string>('');
   const [referenceValues, setReferenceValues] = useState<ReferenceValue[]>([]);
   const [specificConditions, setSpecificConditions] = useState<SpecificCondition[]>([]);
+  const [unites, setUnites] = useState<Unit[]>([]);
   const [isAddingReference, setIsAddingReference] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +63,8 @@ const ExaminationReferencesPage: React.FC = () => {
     sexe: '',
     min_age: '',
     max_age: '',
-    specific_condition: ''
+    specific_condition: '',
+    unite: ''
   });
 
   useEffect(() => {
@@ -79,13 +87,15 @@ const ExaminationReferencesPage: React.FC = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const [examsData, conditionsData] = await Promise.all([
+      const [examsData, conditionsData, uniteData] = await Promise.all([
         getExaminations(),
-        getSpecificConditions()
+        getSpecificConditions(),
+        getUnits()
       ]);
       setExaminations(examsData);
       setFilteredExaminations(examsData);
       setSpecificConditions(conditionsData);
+      setUnites(uniteData);
       setError(null);
     } catch (err) {
       setError('Erreur lors du chargement des données');
@@ -114,7 +124,7 @@ const ExaminationReferencesPage: React.FC = () => {
 
   const handleAddReference = async () => {
     try {
-      if (!selectedExam || !newReference.min_value) {
+      if (!selectedExam || !newReference.min_value || !newReference.unite || !newReference.max_value) {
         setError('Veuillez remplir les champs obligatoires');
         return;
       }
@@ -130,10 +140,11 @@ const ExaminationReferencesPage: React.FC = () => {
         designation: examinations.find(exam => parseInt(exam.id) === parseInt(selectedExam))?.designation || '',
         min_value: parseFloat(newReference.min_value),
         max_value: newReference.max_value ? parseFloat(newReference.max_value) : null,
+        unite: newReference.unite,
         sexe: newReference.sexe || null,
         min_age: newReference.min_age ? parseInt(newReference.min_age) : null,
         max_age: newReference.max_age ? parseInt(newReference.max_age) : null,
-        id_specific_condition: specificConditionId
+        id_specific_condition: newReference.specific_condition || null,
       };
 
       await createReferenceValue(referenceValue);
@@ -145,7 +156,8 @@ const ExaminationReferencesPage: React.FC = () => {
         sexe: '',
         min_age: '',
         max_age: '',
-        specific_condition: ''
+        specific_condition: '',
+        unite: ''
       });
       setError(null);
     } catch (err) {
@@ -263,7 +275,7 @@ const ExaminationReferencesPage: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Valeur maximale
+                        Valeur maximale <span className=' text-red-500'>*</span>
                       </label>
                       <input
                         type="number"
@@ -272,6 +284,23 @@ const ExaminationReferencesPage: React.FC = () => {
                         onChange={(e) => setNewReference({ ...newReference, max_value: e.target.value })}
                         className="w-full rounded-md border border-gray-300 shadow-sm px-4 py-2"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Unité <span className=' text-red-500'>*</span>
+                      </label>
+                      <select
+                        value={newReference.unite}
+                        onChange={(e) => setNewReference({ ...newReference, unite: e.target.value })}
+                        className="w-full rounded-md border border-gray-300 shadow-sm px-4 py-2"
+                      >
+                        <option value="">Aucune</option>
+                        {unites.map((unite) => (
+                          <option key={unite.id} value={unite.id}>
+                            {unite.designation}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
