@@ -3,7 +3,8 @@ import { X, Save, Printer } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
 import { getBilanDetails, updateExaminationResult, BilanDetails, BilanDetail } from '../services/api.tsx';
-import { afficherSexe, convertDate, formatDate } from '../services/function.tsx';
+import { afficherSexe, convertDateShort, formatDate } from '../services/function.tsx';
+import EnteteHopital from './EnteteHdj.tsx';
 
 interface BilanDetailsModalProps {
   isOpen: boolean;
@@ -225,8 +226,8 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
               <div className="hidden">
                 <div ref={printRef} className="p-8 bg-white">
                   {/* Lab header */}
-                  <div className="border-b-2 border-gray-800 pb-4 mb-6">
-                    <div className="flex justify-between items-center">
+                  <div className="border-b-2 border-gray-800 pb-4 mb-2">
+                    {/* <div className="flex justify-between items-center">
                       <div>
                         <h1 className="text-2xl font-bold text-gray-900">LABORATOIRE PHILMEDICAL</h1>
                         <p className="text-gray-600">Rue des Cliniques, Quartier Médical</p>
@@ -239,9 +240,11 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                         <p className="text-gray-600">N° Facture: {bilanDetails.num_facture}</p>
                         <p className="text-gray-600">Code Labo: {bilanDetails.code_labo || 'N/A'}</p>
                       </div>
-                    </div>
+                    </div> */}
+                    <EnteteHopital />
                   </div>
 
+                  <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">RÉSULTATS D'ANALYSES</h2>
                   {/* Patient information */}
                   <div className="mb-6 grid grid-cols-2 gap-4">
                     <div>
@@ -253,11 +256,15 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     <div>
                       <h3 className="font-bold text-gray-800 mb-2">PRESCRIPTEUR</h3>
                       <p>{bilanDetails.prescripteur.designation}</p>
-                      <p><span className="font-semibold">Catégorie:</span> {bilanDetails.categorie.designation}</p>
-                      <p><span className="font-semibold">Nature échantillon:</span> {bilanDetails.type_echantillon.designation || 'N/A'}</p>
+                      <p><span className="font-semibold">N° Facture:</span> {bilanDetails.num_facture}</p>
+                      {/* <p><span className="font-semibold">Catégorie:</span> {bilanDetails.categorie.designation}</p>
+                      <p><span className="font-semibold">Nature échantillon:</span> {bilanDetails.type_echantillon.designation || 'N/A'}</p> */}
                     </div>
                   </div>
-
+                  <div className='mb-3'>
+                    <h2 className='font-bold text-gray-800 text-center capitalize'>{bilanDetails.categorie.designation.toUpperCase()}</h2>
+                    <p><span className="font-semibold">Nature échantillon:</span> {bilanDetails.type_echantillon.designation || 'N/A'}</p>
+                  </div>
                   {/* Examination results */}
                   <div className="mb-6">
                     <h3 className="font-bold text-gray-800 mb-2">RÉSULTATS</h3>
@@ -300,7 +307,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <QRCodeSVG value={bilanDetails.num_facture} size={100} />
+                      <QRCodeSVG value={bilanDetails.num_facture} size={80} />
                       <p className="text-xs text-gray-500 mt-1">Scan pour vérification</p>
                     </div>
                   </div>

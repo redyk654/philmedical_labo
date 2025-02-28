@@ -23,7 +23,7 @@ export function extraireCode(designation: string): string {
     return designation_extrait.toUpperCase();
 }
 
-export function convertDate(dateString: string): string {
+export function convertDateShort(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('fr-FR', {
         year: 'numeric',
@@ -34,10 +34,26 @@ export function convertDate(dateString: string): string {
     });
 }
 
+export function convertDateLong(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+}
+
 export function formatDate(date: Date): string {
     return date.toLocaleDateString('fr-FR', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
     });
+}
+
+export const styleEntete = {
+    color: 'black',
+    borderBottom: '1px dotted #000',
+    letterSpacing: '1px',
+    fontSize: 5
 }

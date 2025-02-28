@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getPatientByCode, getPatientBilansByCode, Patient, Bilan } from '../services/api.tsx';
 import NewBilanModal from '../components/NewBilanModal.tsx';
 import BilanDetailsModal from '../components/BilanDetailsModal.tsx';
-import { convertDate } from '../services/function.tsx';
+import { convertDateLong, convertDateShort } from '../services/function.tsx';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,31 +14,45 @@ const ProfilePage: React.FC = () => {
   const [isNewBilanModalOpen, setIsNewBilanModalOpen] = useState(false);
   const [selectedBilan, setSelectedBilan] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchPatientData = async () => {
-      const patientCode = localStorage.getItem('selectedPatientCode');
+  const fetchPatientData = async () => {
+    const patientCode = localStorage.getItem('selectedPatientCode');
+    
+    if (!patientCode) {
+      navigate('/');
+      return;
+    }
+
+    try {
+      const patientData = await getPatientByCode(patientCode);
+      setPatient(patientData);
       
-      if (!patientCode) {
-        navigate('/');
-        return;
-      }
+      const bilansData = await getPatientBilansByCode(patientCode);
+      setBilans(bilansData);
+    } catch (err) {
+      console.error(err);
+      setError('Erreur lors du chargement des données du patient');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      try {
-        const patientData = await getPatientByCode(patientCode);
-        setPatient(patientData);
-        
-        const bilansData = await getPatientBilansByCode(patientCode);
-        setBilans(bilansData);
-      } catch (err) {
-        console.error(err);
-        setError('Erreur lors du chargement des données du patient');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
+  useEffect(() => {
     fetchPatientData();
-  }, [navigate]);
+  }, []);
+
+  const closeNewBilanModal = () => {
+    setIsNewBilanModalOpen(false);
+    fetchPatientData();
+  }
+
+  const closeDetailsModal = () => {
+    setSelectedBilan(null)
+    fetchPatientData();
+  }
+
+  const handleEditProfile = () => {
+    navigate('/edit-profile');
+  };
 
   if (isLoading) {
     return (
@@ -67,24 +81,24 @@ const ProfilePage: React.FC = () => {
           >
             Nouveau Bilan
           </button>
-          <Link
-            to="/dernier-bilan"
+          <button
+            onClick={() => setSelectedBilan(bilans[0].num_facture)}
             className="inline-flex items-center px-4 py-2 border border-[#464E77] text-[#464E77] rounded-md hover:bg-gray-50 transition-colors"
           >
             Afficher Le Dernier Bilan
-          </Link>
+          </button>
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Informations Personnelles</h2>
-          <Link
-            to="/edit-profile"
+          <button
+            onClick={handleEditProfile}
             className="text-[#464E77] hover:text-[#363c5d] transition-colors"
           >
             Editer Le Profil
-          </Link>
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -103,7 +117,7 @@ const ProfilePage: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Date Naissance</label>
-              <div className="mt-1 text-gray-900">{patient.date_naissance}</div>
+              <div className="mt-1 text-gray-900">{convertDateLong(patient.date_naissance) || '-'}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Adresse</label>
@@ -158,7 +172,7 @@ const ProfilePage: React.FC = () => {
                     {bilan.code_labo}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {convertDate(bilan.save_at)}
+                    {convertDateShort(bilan.save_at)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -193,7 +207,7 @@ const ProfilePage: React.FC = () => {
 
       <NewBilanModal
         isOpen={isNewBilanModalOpen}
-        onClose={() => setIsNewBilanModalOpen(false)}
+        onClose={closeNewBilanModal}
         patientName={patient.nom}
         patientCode={patient.code}
         patientSexe={patient.sexe}
@@ -203,7 +217,7 @@ const ProfilePage: React.FC = () => {
       {selectedBilan && (
         <BilanDetailsModal
           isOpen={true}
-          onClose={() => setSelectedBilan(null)}
+          onClose={closeDetailsModal}
           numFacture={selectedBilan}
           patientName={patient.nom}
           patientAge={patient.age}

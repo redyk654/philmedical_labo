@@ -145,6 +145,29 @@ export const getPatientByCode = async (code: string): Promise<Patient> => {
   }
 };
 
+export const updatePatient = async (code: string, patientData: Partial<Patient>): Promise<Patient> => {
+  try {
+    const response = await authenticatedFetch(`/update_patient.php`, {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        ...patientData
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Échec de la mise à jour du patient');
+    }
+    
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Serveur indisponible');
+  }
+};
+
 export const getPatientBilansByCode = async (code: string): Promise<Bilan[]> => {
   try {
     const response = await authenticatedFetch(`/get_patient_bilans_by_code.php?code=${encodeURIComponent(code)}`);
