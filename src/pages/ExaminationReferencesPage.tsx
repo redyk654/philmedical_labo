@@ -22,6 +22,10 @@ interface ReferenceValue {
   specific_condition?: {
     designation: string;
   };
+  unite_id: string | null;
+  unite?: {
+    designation: string;
+  };
 }
 
 interface SpecificCondition {
@@ -129,11 +133,11 @@ const ExaminationReferencesPage: React.FC = () => {
         return;
       }
 
-      let specificConditionId: string | null = null;
-      if (newReference.specific_condition) {
-        const condition = await createSpecificCondition(newReference.specific_condition);
-        specificConditionId = condition.id;
-      }
+      // let specificConditionId: string | null = null;
+      // if (newReference.specific_condition) {
+      //   const condition = await createSpecificCondition(newReference.specific_condition);
+      //   specificConditionId = condition.id;
+      // }
 
       const referenceValue = {
         id_exam: selectedExam,
@@ -146,20 +150,20 @@ const ExaminationReferencesPage: React.FC = () => {
         max_age: newReference.max_age ? parseInt(newReference.max_age) : null,
         id_specific_condition: newReference.specific_condition || null,
       };
-      console.log(referenceValue);
+      // console.log(referenceValue);
       
       await createReferenceValue(referenceValue);
       await fetchReferenceValues(selectedExam);
       setIsAddingReference(false);
-      setNewReference({
-        min_value: '',
-        max_value: '',
-        sexe: '',
-        min_age: '',
-        max_age: '',
-        specific_condition: '',
-        unite: ''
-      });
+      // setNewReference({
+      //   min_value: '',
+      //   max_value: '',
+      //   sexe: '',
+      //   min_age: '',
+      //   max_age: '',
+      //   specific_condition: '',
+      //   unite: ''
+      // });
       setError(null);
     } catch (err) {
         console.log(err);
@@ -380,6 +384,7 @@ const ExaminationReferencesPage: React.FC = () => {
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Min</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Max</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unité</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Genre</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Âge Min</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Âge Max</th>
@@ -392,6 +397,9 @@ const ExaminationReferencesPage: React.FC = () => {
                       <tr key={value.id}>
                         <td className="px-6 py-4 whitespace-nowrap">{value.min_value}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{value.max_value || '-'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {value.unite?.designation || '-'}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {value.sexe === 'H' ? 'Homme' : value.sexe === 'F' ? 'Femme' : 'Tous'}
                         </td>

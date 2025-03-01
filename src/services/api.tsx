@@ -50,12 +50,22 @@ export interface ReferenceValue {
   min_age: number | null;
   max_age: number | null;
   id_specific_condition: string | null;
+  unite_id: string | null;
+  unite?: {
+    designation: string;
+  };
   specific_condition?: {
     designation: string;
   };
+  
 }
 
 export interface SpecificCondition {
+  id: string;
+  designation: string;
+}
+
+export interface Unit {
   id: string;
   designation: string;
 }
@@ -78,6 +88,7 @@ export interface NewReferenceValue {
   min_age: number | null;
   max_age: number | null;
   id_specific_condition: string | null;
+  unite_id: string | null;
 }
 
 export interface BilanDetail {

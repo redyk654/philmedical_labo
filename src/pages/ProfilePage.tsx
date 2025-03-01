@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getPatientByCode, getPatientBilansByCode, Patient, Bilan } from '../services/api.tsx';
 import NewBilanModal from '../components/NewBilanModal.tsx';
 import BilanDetailsModal from '../components/BilanDetailsModal.tsx';
-import { convertDateLong, convertDateShort } from '../services/function.tsx';
+import { afficherSexe, convertDateLong, convertDateShort } from '../services/function.tsx';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const ProfilePage: React.FC = () => {
     const patientCode = localStorage.getItem('selectedPatientCode');
     
     if (!patientCode) {
-      navigate('/');
+      navigate('/philmedical/laboratoire');
       return;
     }
 
@@ -51,7 +51,7 @@ const ProfilePage: React.FC = () => {
   }
 
   const handleEditProfile = () => {
-    navigate('/edit-profile');
+    navigate('/philmedical/laboratoire/edit-profile');
   };
 
   if (isLoading) {
@@ -109,7 +109,7 @@ const ProfilePage: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Sexe</label>
-              <div className="mt-1 text-gray-900">{patient.sexe}</div>
+              <div className="mt-1 text-gray-900">{afficherSexe(patient.sexe)}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Age</label>

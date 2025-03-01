@@ -10,7 +10,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (username: string, password: string) => {
     try {
       await login(username, password);
-      navigate('/');
+      navigate('/philmedical/laboratoire');
     } catch (error) {
       throw error;
     }

@@ -381,14 +381,13 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
             </div>
             <div>
               <label htmlFor="echantillon" className="block text-sm font-medium text-gray-700">
-                Selectionner Nature échantillon<span className=' text-red-500'>*</span>
+                Selectionner Nature échantillon
               </label>
               <select
                 id="echantillon"
                 value={typeEchantillon}
                 onChange={(e) => setTypeEchantillon(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
-                required
               >
                 <option value="">Sélectionner...</option>
                 {typeEchantillons.map((echantillon) => (

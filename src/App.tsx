@@ -10,20 +10,20 @@ import ConfigurationsPage from './pages/ConfigurationsPage.tsx';
 import ExaminationReferencesPage from './pages/ExaminationReferencesPage.tsx';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
+  return isAuthenticated() ? <>{children}</> : <Navigate to="/philmedical/laboratoire/login" />;
 };
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={
+        <Route path="/philmedical/laboratoire/login" element={
           <HeaderLayout>
             <LoginPage />
           </HeaderLayout>
         } />
         
-        <Route path="/" element={
+        <Route path="/philmedical/laboratoire" element={
           <PrivateRoute>
             <HeaderLayout>
               <HomePage />
@@ -31,7 +31,7 @@ function App() {
           </PrivateRoute>
         } />
         
-        <Route path="/profile" element={
+        <Route path="/philmedical/laboratoire/profile" element={
           <PrivateRoute>
             <HeaderLayout>
               <ProfilePage />
@@ -39,21 +39,21 @@ function App() {
           </PrivateRoute>
         } />
         
-        <Route path="/edit-profile" element={
+        <Route path="/philmedical/laboratoire/edit-profile" element={
           <PrivateRoute>
             <HeaderLayout>
               <EditProfilePage />
             </HeaderLayout>
           </PrivateRoute>
         } />
-                <Route path="/configurations" element={
+                <Route path="/philmedical/laboratoire/configurations" element={
           <PrivateRoute>
             <HeaderLayout>
               <ConfigurationsPage />
             </HeaderLayout>
           </PrivateRoute>
         } />
-        <Route path="/examination-references" element={
+        <Route path="/philmedical/laboratoire/examination-references" element={
           <PrivateRoute>
             <HeaderLayout>
               <ExaminationReferencesPage />

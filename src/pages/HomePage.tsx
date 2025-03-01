@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
 
   const handlePatientClick = (codePatient: string) => {
     localStorage.setItem('selectedPatientCode', codePatient);
-    navigate('/profile');
+    navigate('/philmedical/laboratoire/profile');
   };
 
   return (

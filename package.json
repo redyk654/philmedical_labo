@@ -1,6 +1,7 @@
 {
   "name": "my-app",
-  "version": "0.1.0",
+  "homepage": "/philmedical/laboratoire",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@types/react": "^18.3.18",
