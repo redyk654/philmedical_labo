@@ -3,7 +3,7 @@ import { X, Save, Printer } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
 import { getBilanDetails, updateExaminationResult, BilanDetails, BilanDetail } from '../services/api.tsx';
-import { afficherSexe, convertDateShort, formatDate } from '../services/function.tsx';
+import { afficherSexe, convertDateShort, extraireCode, formatDate } from '../services/function.tsx';
 import EnteteHopital from './EnteteHdj.tsx';
 
 interface BilanDetailsModalProps {
@@ -180,7 +180,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                         {bilanDetails.examens.map((exam) => (
                           <tr key={exam.id}>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              {exam.designation_examen}
+                              {extraireCode(exam.designation_examen)}
                             </td>
                             <td className="px-6 py-4">
                               <input
@@ -279,7 +279,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                       <tbody>
                         {bilanDetails.examens.map((exam) => (
                           <tr key={exam.id}>
-                            <td className="border border-gray-300 px-4 py-2">{exam.designation_examen}</td>
+                            <td className="border border-gray-300 px-4 py-2">{extraireCode(exam.designation_examen)}</td>
                             <td className="border border-gray-300 px-4 py-2">{editedResults[exam.id] || ''}</td>
                             <td className="border border-gray-300 px-4 py-2">{exam.valeur_reference || 'N/A'}</td>
                           </tr>
