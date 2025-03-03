@@ -57,7 +57,7 @@ const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 <Settings className="w-5 h-5" />
                 <span>Editer profil</span>
               </Link>
-              {/* <Link
+              <Link
                 to="/philmedical/laboratoire/examination-references"
                 className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
                   location.pathname === '/philmedical/laboratoire/examination-references' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
@@ -74,7 +74,7 @@ const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
               >
                 <Cog className="w-5 h-5" />
                 <span>Configurations</span>
-              </Link> */}
+              </Link>
               <button
                 onClick={handleLogout}
                 className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors flex items-center space-x-2"
