@@ -103,27 +103,19 @@ export interface BilanDetails {
   id: string;
   num_facture: string;
   code_labo: string;
-  prescripteur: {
-    id: string;
-    designation: string;
-  };
-  categorie: {
-    id: string;
-    designation: string;
-  };
-  type_echantillon: {
-    id: string;
-    designation: string;
-  };
-  specific_condition: {
-    id: string;
-    designation: string;
-  } | null;
-  examens: BilanDetail[];
-  commentaire: string | null;
+  prescripteur_designation: string;
+  categorie_designation: string;
+  type_echantillon_designation: string;
+  examen: string;
+  resultat: string;
   save_at: string;
   update_at: string;
-  statut: string;
+}
+
+export interface ExamensLabo {
+  id: string;
+  designation: string;
+  contenu?: string;
 }
 
 export const searchPatients = async (searchTerm: string): Promise<Patient[]> => {
@@ -354,6 +346,17 @@ export const checkBilanExists = async (invoiceNumber: string): Promise<boolean> 
   return data.exists;
 };
 
+export const getExamensLabo = async (): Promise<ExamensLabo[]> => {
+  const response = await authenticatedFetch('/examens_labo.php');
+
+  if(!response.ok) {
+    throw new Error('Echec de la recherche des examens')
+  }
+
+  return response.json()
+    
+}
+
 // Create new bilan
 export const createBilan = async (data): Promise<Bilan> => {
   const response = await authenticatedFetch('/create_bilan.php', {
@@ -381,14 +384,12 @@ export const getBilanDetails = async (numFacture: string): Promise<BilanDetails>
 export const updateExaminationResult = async (
   examinationId: string,
   result: string,
-  comment: string | null = null
 ): Promise<void> => {
   const response = await authenticatedFetch('/update_examination_result.php', {
     method: 'POST',
     body: JSON.stringify({
       examination_id: examinationId,
-      result,
-      comment
+      result
     })
   });
   

@@ -1,0 +1,76 @@
+.markdown-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .editor-container {
+    margin-bottom: 20px;
+  }
+  
+  .toolbar {
+    margin-bottom: 10px;
+  }
+  
+  .toolbar button {
+    padding: 8px 12px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  
+  .toolbar button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .markdown-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  
+  .preview-container {
+    border: 1px solid #eee;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #fafafa;
+  }
+  
+  .markdown-preview {
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Style pour les tableaux dans l'aperçu */
+  .markdown-preview table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 15px 0;
+  }
+  
+  .markdown-preview th,
+  .markdown-preview td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  
+  .markdown-preview th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .markdown-preview tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }

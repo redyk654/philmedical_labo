@@ -18,7 +18,7 @@ export default function EnteteHopital() {
                 </strong>
             </div>
         </div>
-        <div style={{paddingTop: '40px'}}>
+        <div style={{paddingTop: '20px'}}>
             <img src={logo} alt="" width={60} height={60} />
         </div>
         <div style={{ lineHeight: '20px'}}>
