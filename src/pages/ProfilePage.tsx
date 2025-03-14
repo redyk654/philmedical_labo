@@ -211,6 +211,7 @@ const ProfilePage: React.FC = () => {
         patientName={patient.nom}
         patientCode={patient.code}
         patientSexe={patient.sexe}
+        patientAgeUnit={patient.age_unit}
         patientAge={patient.age}
       />
 

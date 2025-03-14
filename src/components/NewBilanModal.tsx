@@ -10,6 +10,7 @@ interface NewBilanModalProps {
   patientCode: string;
   patientSexe: string;
   patientAge: number;
+  patientAgeUnit: string;
 }
 
 interface Invoice {
@@ -22,7 +23,7 @@ interface SampleType {
   designation: string;
 }
 
-const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientName, patientCode, patientAge, patientSexe }) => {
+const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientName, patientCode, patientAge, patientAgeUnit, patientSexe }) => {
   const [numFacture, setNumFacture] = useState('');
   const [numBilan, setNumBilan] = useState('');
   const [prescripteur, setPrescripteur] = useState('');
@@ -142,12 +143,13 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-testid="bilan-modal">
       <div className="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
         <div className="p-6 space-y-6 flex-1 overflow-y-auto">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">NOUVEAU BILAN</h2>
+            <h2 className="text-2xl font-bold text-gray-900" data-testid="modal-title">NOUVEAU BILAN</h2>
             <button
+              data-testid="close-modal-button"
               onClick={onClose}
               className="text-gray-400 hover:text-gray-500 transition-colors"
             >
@@ -156,22 +158,23 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700" data-testid="error-message">
               {error}
             </div>
           )}
 
-          <p className="text-lg text-gray-700">
-            Patient: {patientName} - {patientAge} ans - {patientSexe === 'H' ? 'Homme' : 'Femme'}
+          <p className="text-lg text-gray-700" data-testid="patient-info">
+            Patient: {patientName} - {patientAge} {patientAgeUnit} - {patientSexe === 'H' ? 'Homme' : 'Femme'}
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" data-testid="bilan-form">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
                 <label htmlFor="numFacture" className="block text-sm font-medium text-gray-700">
-                  N° Facture <span className=' text-red-500'>*</span>
+                  N° Facture <span className='text-red-500'>*</span>
                 </label>
                 <input
+                  data-testid="invoice-number-input"
                   type="text"
                   id="numFacture"
                   value={numFacture}
@@ -181,11 +184,12 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   autoComplete='off'
                 />
                 {invoiceSuggestions.length > 0 && (
-                  <div className="absolute z-[1000] w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                  <div data-testid="invoice-suggestions" className="absolute z-[1000] w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
                     {invoiceSuggestions.map((invoice) => (
                       <button
                         key={invoice.id_fac}
                         type="button"
+                        data-testid={`invoice-suggestion-${invoice.id}`}
                         onClick={() => handleInvoiceSelect(invoice)}
                         className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:outline-none"
                       >
@@ -201,6 +205,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                   Code Labo
                 </label>
                 <input
+                  data-testid="lab-code-input"
                   type="text"
                   id="numBilan"
                   value={numBilan}
@@ -212,9 +217,10 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
             </div>
             <div>
               <label htmlFor="examen" className="block text-sm font-medium text-gray-700">
-                Selectionner Examens<span className=' text-red-500'>*</span>
+                Selectionner Examens<span className='text-red-500'>*</span>
               </label>
               <select
+                data-testid="exam-select"
                 id="examen"
                 value={examen}
                 onChange={(e) => setExamen(e.target.value)}
@@ -239,6 +245,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                 onChange={(e) => setCategorie(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
                 required
+                data-testid="categorie-select"
               >
                 <option value="">Sélectionner...</option>
                 {categories.map((categorie) => (
@@ -276,6 +283,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                 onChange={(e) => setPrescripteur(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
                 required
+                data-testid="prescripteur-select"
               >
                 <option value="">Sélectionner...</option>
                 {prescripteurs.map((prescripteur) => (
@@ -290,6 +298,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
               <div className="flex space-x-4">
                 <button
                   type="button"
+                  data-testid="cancel-button"
                   onClick={cancelBilan}
                   className="flex-1 bg-red-500 text-white px-4 py-3 rounded-md hover:bg-red-600 transition-colors h-12"
                 >
@@ -297,6 +306,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                 </button>
                 <button
                   type="submit"
+                  data-testid="submit-button"
                   className="flex-1 bg-[#464E77] text-white px-4 py-3 rounded-md hover:bg-[#363c5d] transition-colors h-12"
                 >
                   ENREGISTRER LE BILAN
