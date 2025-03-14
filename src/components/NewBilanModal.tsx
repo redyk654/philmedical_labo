@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { authenticatedFetch } from '../services/auth.tsx';
-import { extraireCode } from '../services/function.tsx';
-import { CategorieExamen, checkBilanExists, checkInvoice, createBilan, ExamensLabo, getExamensLabo, getExaminationCategories, getPrescribers, getSampleTypes, getSpecificConditions, Prescripteur, SpecificCondition } from '../services/api.tsx';
+import { CategorieExamen, checkBilanExists, checkInvoice, createBilan, ExamensLabo, getExamensLabo, getExaminationCategories, getPrescribers, getSampleTypes, Prescripteur } from '../services/api.tsx';
 
 interface NewBilanModalProps {
   isOpen: boolean;
@@ -83,6 +82,13 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
     setError(null);
 
     try {
+
+      // Validate required fields
+      if (!numFacture || !prescripteur) {
+        setError("Veuillez remplir tous les champs obligatoires");
+        return;
+      }
+
       // Check if invoice exists
       const invoiceExists = await checkInvoice(numFacture);
       
@@ -92,15 +98,9 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
       }
 
       // Check if bilan already exists
-      const bilanExists = await checkBilanExists(numFacture);
+      const bilanExists = await checkBilanExists(numFacture, categorie);
       if (bilanExists) {
         setError("Un bilan existe déjà pour cette facture");
-        return;
-      }
-
-      // Validate required fields
-      if (!numFacture || !prescripteur) {
-        setError("Veuillez remplir tous les champs obligatoires");
         return;
       }
 
@@ -115,7 +115,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
         examen: examen,
         resultat: examens.filter(exam => exam.designation === examen)[0].contenu
       };
-      console.log(JSON.stringify(data));
+      // console.log(JSON.stringify(data));
       
       const bilan = await createBilan(data);
       console.log(bilan);

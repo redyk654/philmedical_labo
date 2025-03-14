@@ -12,7 +12,7 @@ const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isNewBilanModalOpen, setIsNewBilanModalOpen] = useState(false);
-  const [selectedBilan, setSelectedBilan] = useState<string | null>(null);
+  const [selectedBilan, setSelectedBilan] = useState<number | null>(null);
 
   const fetchPatientData = async () => {
     const patientCode = localStorage.getItem('selectedPatientCode');
@@ -82,7 +82,7 @@ const ProfilePage: React.FC = () => {
             Nouveau Bilan
           </button>
           <button
-            onClick={() => setSelectedBilan(bilans[0].num_facture)}
+            onClick={() => setSelectedBilan(bilans[0].id)}
             className="inline-flex items-center px-4 py-2 border border-[#464E77] text-[#464E77] rounded-md hover:bg-gray-50 transition-colors"
           >
             Afficher Le Dernier Bilan
@@ -147,19 +147,19 @@ const ProfilePage: React.FC = () => {
 
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Historique Des Bilans</h2>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto overflow-y-auto max-h-[50vh]">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Code Labo
+                  Num Bilan
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date D'enregistrement
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
-                </th>
+                </th> */}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Détails
                 </th>
@@ -169,12 +169,12 @@ const ProfilePage: React.FC = () => {
               {bilans.map((bilan) => (
                 <tr key={bilan.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {bilan.code_labo}
+                    {bilan.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {convertDateShort(bilan.save_at)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  {/* <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       bilan.statut === 'Complété'
                         ? 'bg-green-100 text-green-800'
@@ -182,10 +182,10 @@ const ProfilePage: React.FC = () => {
                     }`}>
                       {bilan.statut}
                     </span>
-                  </td>
+                  </td> */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => setSelectedBilan(bilan.num_facture)}
+                      onClick={() => setSelectedBilan(bilan.id)}
                       className="text-[#464E77] hover:text-[#363c5d] transition-colors"
                     >
                       Afficher Les Détails
@@ -218,7 +218,7 @@ const ProfilePage: React.FC = () => {
         <BilanDetailsModal
           isOpen={true}
           onClose={closeDetailsModal}
-          numFacture={selectedBilan}
+          bilanId={selectedBilan}
           patientName={patient.nom}
           patientAge={patient.age}
           patientSexe={patient.sexe}

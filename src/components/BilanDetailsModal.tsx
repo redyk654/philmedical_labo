@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, Printer } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
-import { getBilanDetails, updateExaminationResult, BilanDetails, BilanDetail } from '../services/api.tsx';
+import { getBilanDetails, updateExaminationResult, BilanDetails } from '../services/api.tsx';
 import { afficherSexe, formatDate } from '../services/function.tsx';
 import EnteteHopital from './EnteteHdj.tsx';
 
 interface BilanDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  numFacture: string;
+  bilanId: number;
   patientName: string;
   patientAge: number;
   patientSexe: string;
@@ -18,31 +18,31 @@ interface BilanDetailsModalProps {
 const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
   isOpen,
   onClose,
-  numFacture,
+  bilanId,
   patientName,
   patientAge,
   patientSexe
 }) => {
   const [bilanDetails, setBilanDetails] = useState<BilanDetails | null>(null);
-  const [editedResults, setEditedResults] = useState<Record<string, string>>({});
-  const [comment, setComment] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [resultFetched, setResultFetched] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [savingExamId, setSavingExamId] = useState<string | null>(null);
   
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen && numFacture) {
+    if (isOpen && bilanId) {
       fetchBilanDetails();
     }
-  }, [isOpen, numFacture]);
+  }, [isOpen, bilanId]);
 
   const fetchBilanDetails = async () => {
     try {
       setIsLoading(true);
-      const details = await getBilanDetails(numFacture);
+      const details = await getBilanDetails(bilanId);
       setBilanDetails(details);
+      setResultFetched(details?.resultat)
       
       setError(null);
     } catch (err) {
@@ -52,17 +52,14 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
     }
   };
 
-  const handleResultChange = (examId: string, value: string) => {
-    setEditedResults(prev => ({
-      ...prev,
-      [examId]: value
-    }));
-  };
-
   const handleSaveResult = async () => {
     try {
       if (bilanDetails) {
         await updateExaminationResult(bilanDetails.id, bilanDetails.resultat);
+        setSuccessMessage('Modifications enregistrées avec succès');
+        setTimeout(() => {
+          setSuccessMessage('')
+        }, 2000);
       }
       setError(null);
     } catch (err) {
@@ -72,7 +69,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: `Bilan-${numFacture}`,
+    documentTitle: `Bilan-${bilanId}-${bilanDetails?.categorie_designation}`,
     onAfterPrint: () => {
       handleSaveResult();
       onClose();
@@ -84,9 +81,14 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-6xl mx-4 max-h-[100vh] h-[94vh] flex flex-col">
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700">
+            {successMessage}
+          </div>
+        )}
         <div className="p-6 flex-1 overflow-y-auto">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">DÉTAILS DU BILAN</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{bilanDetails?.examen}</h2>
             <div className="flex space-x-2">
               <button
                 onClick={() => handlePrint()}
@@ -164,15 +166,17 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     placeholder="Ajouter un commentaire..."
                   />
                 </div>
-                {/* <div>
+                <div>
                   <button
+                    disabled={bilanDetails.resultat === resultFetched}
                     onClick={handleSaveResult}
-                    className="inline-flex items-center px-4 py-2 bg-[#464E77] text-white rounded-md hover:bg-[#363c5d] transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-[#464E77] 
+                    text-white rounded-md hover:bg-[#363c5d] transition-colors disabled:hover:bg-[#cad1f7] disabled:bg-[#cad1f7] disabled:cursor-not-allowed "
                   >
                     <Save />
                     Enregistrer les modifications
                   </button>
-                </div> */}
+                </div>
               </div>
 
               {/* Printable content - hidden in normal view */}
@@ -200,7 +204,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                       <p><span className="font-semibold">Nature échantillon:</span> {bilanDetails.type_echantillon.designation || 'N/A'}</p> */}
                     </div>
                     <div className="">
-                      <QRCodeSVG value={bilanDetails.num_facture} size={70} />
+                      <QRCodeSVG value={`${bilanDetails.num_facture}-${bilanDetails.id}`} size={70} />
                       <p className="text-xs text-gray-500 mt-1">Scan pour vérification</p>
                     </div>
                   </div>
@@ -219,7 +223,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     />
                   </div>
 
-                  {/* Footer with signature and QR code */}
+                  {/* Footer with signature */}
                   <div className="mt-3 flex justify-between items-end">
                     <div>
                       <p className="font-semibold mb-1">Date: {formatDate(new Date())}</p>

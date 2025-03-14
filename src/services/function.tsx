@@ -55,5 +55,5 @@ export const styleEntete = {
     color: 'black',
     borderBottom: '1px dotted #000',
     letterSpacing: '1px',
-    fontSize: 5
+    fontSize: 7
 }

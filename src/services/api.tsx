@@ -337,8 +337,8 @@ export const checkInvoice = async (invoiceNumber: string): Promise<boolean> => {
 };
 
 // Check if bilan exists for invoice
-export const checkBilanExists = async (invoiceNumber: string): Promise<boolean> => {
-  const response = await authenticatedFetch(`/check_bilan.php?invoice=${invoiceNumber}`);
+export const checkBilanExists = async (invoiceNumber: string, categorieId: string): Promise<boolean> => {
+  const response = await authenticatedFetch(`/check_bilan.php?invoice=${invoiceNumber}&categorie=${categorieId}`);
   if (!response.ok) {
     throw new Error('Failed to check bilan');
   }
@@ -372,8 +372,8 @@ export const createBilan = async (data): Promise<Bilan> => {
 };
 
 // Get bilan details
-export const getBilanDetails = async (numFacture: string): Promise<BilanDetails> => {
-  const response = await authenticatedFetch(`/get_bilan_details.php?num_facture=${numFacture}`);
+export const getBilanDetails = async (id: number): Promise<BilanDetails> => {
+  const response = await authenticatedFetch(`/get_bilan_details.php?bilan_id=${id}`);
   if (!response.ok) {
     throw new Error('Failed to fetch bilan details');
   }
