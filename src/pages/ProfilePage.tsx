@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getPatientByCode, getPatientBilansByCode, Patient, Bilan } from '../services/api.tsx';
 import NewBilanModal from '../components/NewBilanModal.tsx';
 import BilanDetailsModal from '../components/BilanDetailsModal.tsx';
-import { afficherSexe, convertDateLong, convertDateShort } from '../services/function.tsx';
+import { afficherAge, afficherSexe, convertDateLong, convertDateShort } from '../services/function.tsx';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -113,7 +113,7 @@ const ProfilePage: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Age</label>
-              <div className="mt-1 text-gray-900">{patient.age} Ans</div>
+              <div className="mt-1 text-gray-900">{afficherAge(patient.age || 0, patient.age_unit || '')}</div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Date Naissance</label>
@@ -221,6 +221,7 @@ const ProfilePage: React.FC = () => {
           bilanId={selectedBilan}
           patientName={patient.nom}
           patientAge={patient.age}
+          patientAgeUnit={patient.age_unit}
           patientSexe={patient.sexe}
         />
       )}

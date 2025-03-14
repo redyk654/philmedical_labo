@@ -166,9 +166,20 @@ const EditProfilePage: React.FC = () => {
                 name="age"
                 value={formData.age || ''}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
+                className="w-3/4 px-4 py-2 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
                 required
               />
+              <select
+                value={formData.age_unit}
+                onChange={handleInputChange}
+                name="age_unit"
+                className="w-1/4 px-4 py-2 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
+                required
+              >
+                <option value="">Sélectionner...</option>
+                <option value="ans">ans</option>
+                <option value="mois">mois</option>
+              </select>
             </div>
             
             <div>

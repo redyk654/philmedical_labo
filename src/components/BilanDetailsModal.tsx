@@ -3,7 +3,7 @@ import { X, Save, Printer } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
 import { getBilanDetails, updateExaminationResult, BilanDetails } from '../services/api.tsx';
-import { afficherSexe, formatDate } from '../services/function.tsx';
+import { afficherAge, afficherSexe, formatDate } from '../services/function.tsx';
 import EnteteHopital from './EnteteHdj.tsx';
 
 interface BilanDetailsModalProps {
@@ -12,6 +12,7 @@ interface BilanDetailsModalProps {
   bilanId: number;
   patientName: string;
   patientAge: number;
+  patientAgeUnit: string;
   patientSexe: string;
 }
 
@@ -21,6 +22,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
   bilanId,
   patientName,
   patientAge,
+  patientAgeUnit,
   patientSexe
 }) => {
   const [bilanDetails, setBilanDetails] = useState<BilanDetails | null>(null);
@@ -124,13 +126,9 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Patient</h3>
                       <p className="mt-1">
-                        {patientName} - {patientAge} ans - {afficherSexe(patientSexe)}
+                        {patientName} - {afficherAge(patientAge, patientAgeUnit)} - {afficherSexe(patientSexe)}
                       </p>
                     </div>
-                    {/* <div>
-                      <h3 className="text-sm font-medium text-gray-500">N° Facture</h3>
-                      <p className="mt-1">{bilanDetails.num_facture}</p>
-                    </div> */}
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Catégorie</h3>
                       <p className="mt-1">{bilanDetails.categorie_designation}</p>
@@ -141,10 +139,6 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                       <h3 className="text-sm font-medium text-gray-500">Prescripteur</h3>
                       <p className="mt-1">{bilanDetails.prescripteur_designation}</p>
                     </div>
-                    {/* <div>
-                      <h3 className="text-sm font-medium text-gray-500">Code Labo</h3>
-                      <p className="mt-1">{bilanDetails.code_labo || 'N/A'}</p>
-                    </div> */}
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Nature échantillon</h3>
                       <p className="mt-1">{bilanDetails.type_echantillon_designation || 'N/A'}</p>
@@ -193,15 +187,13 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     <div>
                       <h3 className="font-bold text-gray-800 mb-1">INFORMATIONS PATIENT</h3>
                       <p><span className="font-semibold">Nom:</span> {patientName}</p>
-                      <p><span className="font-semibold">Âge:</span> {patientAge} ans</p>
+                      <p><span className="font-semibold">Âge:</span> {afficherAge(patientAge, patientAgeUnit)}</p>
                       <p><span className="font-semibold">Sexe:</span> {afficherSexe(patientSexe)}</p>
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-800 mb-1">PRESCRIPTEUR</h3>
                       <p>{bilanDetails.prescripteur_designation}</p>
                       <p><span className="font-semibold">N° Facture:</span> {bilanDetails.num_facture}</p>
-                      {/* <p><span className="font-semibold">Catégorie:</span> {bilanDetails.categorie.designation}</p>
-                      <p><span className="font-semibold">Nature échantillon:</span> {bilanDetails.type_echantillon.designation || 'N/A'}</p> */}
                     </div>
                     <div className="">
                       <QRCodeSVG value={`${bilanDetails.num_facture}-${bilanDetails.id}`} size={70} />

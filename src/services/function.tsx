@@ -6,6 +6,16 @@ export const afficherSexe = (sexe: string) => {
     }
 };
 
+export const afficherAge = (age: number, ageUnit: string) => {
+    if (age === 0) {
+        return 'N/A';
+    }
+    if (ageUnit === "ans") {
+        return age + " ans";
+    }
+    return age + " mois";
+}
+
 export function extraireCode(designation: string): string {
     let designation_extrait = '';
     const codes = ['RX ', 'LAB ', 'MA ', 'MED ', 'CHR ', 'CO ', 'UPEC ', 'SP ', 'CA '];

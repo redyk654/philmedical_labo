@@ -6,6 +6,7 @@ export interface Patient {
   nom: string;
   sexe: string;
   age: number;
+  age_unit: string;
   date_naissance: string;
   telephone: string;
   quartier?: string;
