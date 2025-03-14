@@ -84,13 +84,13 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-6xl mx-4 max-h-[100vh] h-[94vh] flex flex-col">
         {successMessage && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700" data-testid="success-message">
             {successMessage}
           </div>
         )}
         <div className="p-6 flex-1 overflow-y-auto">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">{bilanDetails?.examen}</h2>
+            <h2 className="text-2xl font-bold text-gray-900" data-testid="bilan-title">{bilanDetails?.examen}</h2>
             <div className="flex space-x-2">
               <button
                 onClick={() => handlePrint()}
@@ -102,14 +102,15 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
               <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-gray-500 transition-colors"
+                title='Fermer'
               >
-                <X className="w-6 h-6" />
+                <X className="w-8 h-8" />
               </button>
             </div>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700" data-testid="error-message">
               {error}
             </div>
           )}
@@ -125,7 +126,7 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Patient</h3>
-                      <p className="mt-1">
+                      <p className="mt-1" data-testid="patient-info">
                         {patientName} - {afficherAge(patientAge, patientAgeUnit)} - {afficherSexe(patientSexe)}
                       </p>
                     </div>
@@ -137,17 +138,18 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Prescripteur</h3>
-                      <p className="mt-1">{bilanDetails.prescripteur_designation}</p>
+                      <p className="mt-1" data-testid="prescripteur-info">{bilanDetails.prescripteur_designation}</p>
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Nature échantillon</h3>
-                      <p className="mt-1">{bilanDetails.type_echantillon_designation || 'N/A'}</p>
+                      <p className="mt-1" data-testid="echantillon-info">{bilanDetails.type_echantillon_designation || 'N/A'}</p>
                     </div>
                   </div>
                 </div>
                 <div className="mt-3">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">Résultat</h3>
                   <textarea
+                    data-testid="resultat-textarea"
                     value={bilanDetails.resultat}
                     onChange={(e) => {
                       setBilanDetails(prev => prev ? {
@@ -157,11 +159,11 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     }}
                     rows={23}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
-                    placeholder="Ajouter un commentaire..."
                   />
                 </div>
                 <div>
                   <button
+                    data-testid="save-button"
                     disabled={bilanDetails.resultat === resultFetched}
                     onClick={handleSaveResult}
                     className="inline-flex items-center px-4 py-2 bg-[#464E77] 
@@ -211,7 +213,6 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                       value={bilanDetails.resultat}
                       rows={23}
                       className="w-full px-2 py-1 border border-gray-300 h-auto text-[16px]"
-                      // placeholder="Ajouter un commentaire..."
                     />
                   </div>
 

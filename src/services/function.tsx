@@ -16,6 +16,14 @@ export const afficherAge = (age: number, ageUnit: string) => {
     return age + " mois";
 }
 
+export function formatDate(date: Date): string {
+    return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
 export function extraireCode(designation: string): string {
     let designation_extrait = '';
     const codes = ['RX ', 'LAB ', 'MA ', 'MED ', 'CHR ', 'CO ', 'UPEC ', 'SP ', 'CA '];
@@ -50,14 +58,6 @@ export function convertDateLong(dateString: string): string {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-    });
-}
-
-export function formatDate(date: Date): string {
-    return date.toLocaleDateString('fr-FR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
     });
 }
 
