@@ -18,7 +18,7 @@ const ProfilePage: React.FC = () => {
     const patientCode = localStorage.getItem('selectedPatientCode');
     
     if (!patientCode) {
-      navigate('/philmedical/laboratoire');
+      navigate('/');
       return;
     }
 
@@ -51,7 +51,7 @@ const ProfilePage: React.FC = () => {
   }
 
   const handleEditProfile = () => {
-    navigate('/philmedical/laboratoire/edit-profile');
+    navigate('/edit-profile');
   };
 
   if (isLoading) {

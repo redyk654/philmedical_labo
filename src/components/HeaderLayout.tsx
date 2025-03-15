@@ -9,11 +9,11 @@ const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   const handleLogout = () => {
     logout();
-    navigate('/philmedical/laboratoire/login');
+    navigate('/login');
   };
 
   // Don't show navigation on login page
-  if (location.pathname === '/philmedical/laboratoire/login') {
+  if (location.pathname === '/login') {
     return <>{children}</>;
   }
 
@@ -24,52 +24,52 @@ const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <Beaker className="w-8 h-8" />
-              <Link to="/philmedical/laboratoire" className="text-xl font-bold">
+              <Link to="/" className="text-xl font-bold">
                 LABORATOIRE
               </Link>
             </div>
             
             <div className="flex items-center space-x-4">
               <Link
-                to="/philmedical/laboratoire"
+                to="/"
                 className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
-                  location.pathname === '/philmedical/laboratoire' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
+                  location.pathname === '/' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
                 <Home className="w-5 h-5" />
                 <span>Accueil</span>
               </Link>
               <Link
-                to="/philmedical/laboratoire/profile"
+                to="/profile"
                 className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
-                  location.pathname === '/philmedical/laboratoire/profile' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
+                  location.pathname === '/profile' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
                 <UserCircle2 className="w-5 h-5" />
                 <span>Profil</span>
               </Link>
               <Link
-                to="/philmedical/laboratoire/edit-profile"
+                to="/edit-profile"
                 className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
-                  location.pathname === '/philmedical/laboratoire/edit-profile' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
+                  location.pathname === '/edit-profile' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
                 <Settings className="w-5 h-5" />
                 <span>Editer profil</span>
               </Link>
               <Link
-                to="/philmedical/laboratoire/examination-references"
+                to="/examination-references"
                 className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
-                  location.pathname === '/philmedical/laboratoire/examination-references' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
+                  location.pathname === '/examination-references' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
                 <FileSpreadsheet className="w-5 h-5" />
                 <span>Valeurs de référence</span>
               </Link>
               <Link
-                to="/philmedical/laboratoire/configurations"
+                to="/configurations"
                 className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
-                  location.pathname === '/philmedical/laboratoire/configurations' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
+                  location.pathname === '/configurations' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
                 }`}
               >
                 <Cog className="w-5 h-5" />

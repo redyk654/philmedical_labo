@@ -17,7 +17,7 @@ const EditProfilePage: React.FC = () => {
       const patientCode = localStorage.getItem('selectedPatientCode');
       
       if (!patientCode) {
-        navigate('/philmedical/laboratoire');
+        navigate('/');
         return;
       }
 
@@ -65,7 +65,7 @@ const EditProfilePage: React.FC = () => {
       
       // Wait 2 seconds before redirecting
       setTimeout(() => {
-        navigate('/philmedical/laboratoire/profile');
+        navigate('/profile');
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la mise à jour');
@@ -75,7 +75,7 @@ const EditProfilePage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate('/philmedical/laboratoire/profile');
+    navigate('/profile');
   };
 
   if (isLoading) {

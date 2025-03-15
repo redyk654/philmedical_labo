@@ -10,20 +10,20 @@ import ConfigurationsPage from './pages/ConfigurationsPage.tsx';
 import ExaminationReferencesPage from './pages/ExaminationReferencesPage.tsx';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return isAuthenticated() ? <>{children}</> : <Navigate to="/philmedical/laboratoire/login" />;
+  return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
 };
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/philmedical/laboratoire'>
       <Routes>
-        <Route path="/philmedical/laboratoire/login" element={
+        <Route path="/login" element={
           <HeaderLayout>
             <LoginPage />
           </HeaderLayout>
         } />
         
-        <Route path="/philmedical/laboratoire" element={
+        <Route path="/" element={
           <PrivateRoute>
             <HeaderLayout>
               <HomePage />
@@ -31,7 +31,7 @@ function App() {
           </PrivateRoute>
         } />
         
-        <Route path="/philmedical/laboratoire/profile" element={
+        <Route path="/profile" element={
           <PrivateRoute>
             <HeaderLayout>
               <ProfilePage />
@@ -39,21 +39,21 @@ function App() {
           </PrivateRoute>
         } />
         
-        <Route path="/philmedical/laboratoire/edit-profile" element={
+        <Route path="/edit-profile" element={
           <PrivateRoute>
             <HeaderLayout>
               <EditProfilePage />
             </HeaderLayout>
           </PrivateRoute>
         } />
-                <Route path="/philmedical/laboratoire/configurations" element={
+                <Route path="/configurations" element={
           <PrivateRoute>
             <HeaderLayout>
               <ConfigurationsPage />
             </HeaderLayout>
           </PrivateRoute>
         } />
-        <Route path="/philmedical/laboratoire/examination-references" element={
+        <Route path="/examination-references" element={
           <PrivateRoute>
             <HeaderLayout>
               <ExaminationReferencesPage />
