@@ -15,7 +15,7 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 function App() {
   return (
-    <BrowserRouter basename='/philmedical/laboratoire'>
+    <BrowserRouter>
       <Routes>
         <Route path="/login" element={
           <HeaderLayout>
