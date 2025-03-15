@@ -1,6 +1,6 @@
 {
     "rewrites": [
-      { "source": "/philmedical/laboratoire/:path*", "destination": "/:path*" },
-      { "source": "/(.*)", "destination": "/index.html" }
+      { "source": "/philmedical/laboratoire/:path*", "destination": "/philmedical/laboratoire/:path*" },
+      { "source": "/(.*)", "destination": "/philmedical/laboratoire/index.html" }
     ]
   }
