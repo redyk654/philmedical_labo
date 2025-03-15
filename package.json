@@ -14,7 +14,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.2",
     "react-scripts": "5.0.1",
-    "react-to-print": "^3.0.5"
+    "react-to-print": "^3.0.5",
+    "yocto-queue": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
