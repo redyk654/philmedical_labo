@@ -3,8 +3,8 @@ export interface LoginResponse {
   error?: string;
 }
 
-// const API_URL = 'http://localhost:8080';
-const API_URL = 'https://philmedical.alwaysdata.net/backend';
+const API_URL = 'http://localhost:8080';
+// const API_URL = 'https://philmedical.alwaysdata.net/backend';
 // const API_URL = 'http://serveur/hdmbanga'
 
 export const login = async (username: string, password: string): Promise<void> => {

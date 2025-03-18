@@ -119,6 +119,13 @@ export interface ExamensLabo {
   contenu?: string;
 }
 
+export interface ListingItem {
+  exam: string;
+  total_exams: number;
+  first_exam_date: string;
+  last_exam_date: string;
+}
+
 export const searchPatients = async (searchTerm: string): Promise<Patient[]> => {
   try {
     const response = await authenticatedFetch(`/search_patients.php?q=${encodeURIComponent(searchTerm)}`);
@@ -397,4 +404,14 @@ export const updateExaminationResult = async (
   if (!response.ok) {
     throw new Error('Failed to update examination result');
   }
+};
+
+export const getListingBilans = async (startDate: string, endDate: string): Promise<ListingItem[]> => {
+  const response = await authenticatedFetch(
+    `/get_listing_bilans.php?start_date=${startDate}&end_date=${endDate}`
+  );
+  if (!response.ok) {
+    throw new Error('Failed to fetch listing data');
+  }
+  return response.json();
 };

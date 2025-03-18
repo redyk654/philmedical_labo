@@ -8,6 +8,7 @@ import EditProfilePage from './pages/EditProfilePage.tsx';
 import { isAuthenticated } from './services/auth.tsx';
 import ConfigurationsPage from './pages/ConfigurationsPage.tsx';
 import ExaminationReferencesPage from './pages/ExaminationReferencesPage.tsx';
+import ListingPage from './pages/ListingPage.tsx';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
@@ -15,7 +16,7 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/philmedical/laboratoire">
       <Routes>
         <Route path="/login" element={
           <HeaderLayout>
@@ -46,7 +47,16 @@ function App() {
             </HeaderLayout>
           </PrivateRoute>
         } />
-                <Route path="/configurations" element={
+
+        <Route path="/listing-bilan" element={
+          <PrivateRoute>
+            <HeaderLayout>
+              <ListingPage />
+            </HeaderLayout>
+          </PrivateRoute>
+        } />
+
+        <Route path="/configurations" element={
           <PrivateRoute>
             <HeaderLayout>
               <ConfigurationsPage />
