@@ -117,6 +117,7 @@ export interface ExamensLabo {
   id: string;
   designation: string;
   contenu?: string;
+  categorie_id: string
 }
 
 export interface ListingItem {

@@ -161,12 +161,20 @@ const BilanDetailsModal: React.FC<BilanDetailsModalProps> = ({
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#464E77] focus:border-[#464E77]"
                   />
                 </div>
-                <div>
+                <div className='flex space-x-4'>
+                  <button
+                    type="button"
+                    data-testid="cancel-button"
+                    onClick={onClose}
+                    className="flex-1 bg-red-500 text-white px-4 py-3 rounded-md hover:bg-red-600 transition-colors h-12"
+                  >
+                    ANNULER
+                  </button>
                   <button
                     data-testid="save-button"
                     disabled={bilanDetails.resultat === resultFetched}
                     onClick={handleSaveResult}
-                    className="inline-flex items-center px-4 py-2 bg-[#464E77] 
+                    className="flex-1 inline-flex justify-center items-center px-4 py-2 bg-[#464E77] 
                     text-white rounded-md hover:bg-[#363c5d] transition-colors disabled:hover:bg-[#cad1f7] disabled:bg-[#cad1f7] disabled:cursor-not-allowed "
                   >
                     <Save />

@@ -22,7 +22,7 @@ interface PrintableContentProps {
       <EnteteHopital />
       
       <div className="mt-8 mb-6 text-center">
-        <h1 className="text-2xl font-bold mb-2">LISTING DES EXAMENS</h1>
+        <h1 className="text-2xl font-bold mb-2">LISTING DU LABORATOIRE</h1>
         <p className="text-gray-600">
           Période du {formatDate(new Date(startDate))} au {formatDate(new Date(endDate))}
         </p>
@@ -108,7 +108,7 @@ const ListingPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900">LISTING DES EXAMENS</h1>
+      <h1 className="text-3xl font-bold text-gray-900">LISTING DU LABORATOIRE</h1>
 
       {listings.length > 0 && (
         <button

@@ -78,6 +78,12 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
     // fetchInvoiceExaminations(invoice.id);
   };
 
+  const handleSelectExamen = (e) => {
+    const examenSelected = e.target.value
+    setExamen(examenSelected)
+    setCategorie(examens.filter(exam => exam.designation === examenSelected)[0].categorie_id)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -223,7 +229,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                 data-testid="exam-select"
                 id="examen"
                 value={examen}
-                onChange={(e) => setExamen(e.target.value)}
+                onChange={handleSelectExamen}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
                 required
               >
