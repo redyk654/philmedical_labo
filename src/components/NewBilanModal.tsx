@@ -97,19 +97,19 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
       }
 
       // Check if invoice exists
-      const invoiceExists = await checkInvoice(numFacture);
+      const invoiceExists = await checkInvoice(numFacture, patientCode);
       
       if (!invoiceExists) {
-        setError("Numéro de facture invalide");
+        setError("Numéro de facture incorrect");
         return;
       }
 
       // Check if bilan already exists
-      const bilanExists = await checkBilanExists(numFacture, categorie);
-      if (bilanExists) {
-        setError("Un bilan existe déjà pour cette facture");
-        return;
-      }
+      // const bilanExists = await checkBilanExists(numFacture);
+      // if (bilanExists) {
+      //   setError("Un bilan existe déjà pour cette facture");
+      //   return;
+      // }
 
       // Create bilan
       const data = {
@@ -262,24 +262,6 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
               </select>
             </div>
             <div>
-              <label htmlFor="echantillon" className="block text-sm font-medium text-gray-700">
-                Selectionner Nature échantillon
-              </label>
-              <select
-                id="echantillon"
-                value={typeEchantillon}
-                onChange={(e) => setTypeEchantillon(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
-              >
-                <option value="">Sélectionner...</option>
-                {typeEchantillons.map((echantillon) => (
-                  <option key={echantillon.id} value={echantillon.id}>
-                    {echantillon.designation.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
               <label htmlFor="prescripteur" className="block text-sm font-medium text-gray-700">
                 Selectionner Prescripteur <span className=' text-red-500'>*</span>
               </label>
@@ -295,6 +277,24 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
                 {prescripteurs.map((prescripteur) => (
                   <option key={prescripteur.id} value={prescripteur.id}>
                     {prescripteur.designation.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="echantillon" className="block text-sm font-medium text-gray-700">
+                Selectionner Nature échantillon
+              </label>
+              <select
+                id="echantillon"
+                value={typeEchantillon}
+                onChange={(e) => setTypeEchantillon(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#464E77] focus:ring-[#464E77] sm:text-sm h-12"
+              >
+                <option value="">Sélectionner...</option>
+                {typeEchantillons.map((echantillon) => (
+                  <option key={echantillon.id} value={echantillon.id}>
+                    {echantillon.designation.toUpperCase()}
                   </option>
                 ))}
               </select>

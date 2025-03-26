@@ -336,7 +336,7 @@ export const getPrescribers = async (): Promise<Prescripteur[]> => {
 
 
 // Check if invoice exists
-export const checkInvoice = async (invoiceNumber: string): Promise<boolean> => {
+export const checkInvoice = async (invoiceNumber: string, patientCode: string): Promise<boolean> => {
   const response = await authenticatedFetch(`/check_invoice.php?numero=${invoiceNumber}`);
   if (!response.ok) {
     throw new Error('Failed to check invoice');
@@ -346,8 +346,8 @@ export const checkInvoice = async (invoiceNumber: string): Promise<boolean> => {
 };
 
 // Check if bilan exists for invoice
-export const checkBilanExists = async (invoiceNumber: string, categorieId: string): Promise<boolean> => {
-  const response = await authenticatedFetch(`/check_bilan.php?invoice=${invoiceNumber}&categorie=${categorieId}`);
+export const checkBilanExists = async (invoiceNumber: string): Promise<boolean> => {
+  const response = await authenticatedFetch(`/check_bilan.php?invoice=${invoiceNumber}`);
   if (!response.ok) {
     throw new Error('Failed to check bilan');
   }

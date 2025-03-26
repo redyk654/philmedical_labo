@@ -63,10 +63,10 @@ const EditProfilePage: React.FC = () => {
         ...formData
       });
       
-      // Wait 2 seconds before redirecting
+      // Wait before redirecting
       setTimeout(() => {
         navigate('/profile');
-      }, 2000);
+      }, 900);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la mise à jour');
     } finally {
@@ -115,7 +115,7 @@ const EditProfilePage: React.FC = () => {
       )}
 
       {successMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700">
+        <div id='success-update-profile' className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700">
           {successMessage}
         </div>
       )}

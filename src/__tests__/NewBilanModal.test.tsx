@@ -170,7 +170,7 @@ describe('NewBilanModal', () => {
     fireEvent.click(screen.getByTestId('submit-button'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('error-message')).toHaveTextContent('Numéro de facture invalide');
+      expect(screen.getByTestId('error-message')).toHaveTextContent('Numéro de facture incorrect');
     });
   });
 });

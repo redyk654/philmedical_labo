@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPatientByCode, getPatientBilansByCode, Patient, Bilan } from '../services/api.tsx';
+import { getPatientByCode, getPatientBilansByCode, Patient, Bilan, getExaminationCategories, CategorieExamen } from '../services/api.tsx';
 import NewBilanModal from '../components/NewBilanModal.tsx';
 import BilanDetailsModal from '../components/BilanDetailsModal.tsx';
 import { afficherAge, afficherSexe, convertDateLong, convertDateShort } from '../services/function.tsx';
@@ -13,6 +13,8 @@ const ProfilePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isNewBilanModalOpen, setIsNewBilanModalOpen] = useState(false);
   const [selectedBilan, setSelectedBilan] = useState<number | null>(null);
+  const [categories, setCategories] = useState<CategorieExamen[]>([]);
+
 
   const fetchPatientData = async () => {
     const patientCode = localStorage.getItem('selectedPatientCode');
@@ -28,6 +30,9 @@ const ProfilePage: React.FC = () => {
       
       const bilansData = await getPatientBilansByCode(patientCode);
       setBilans(bilansData);
+
+      const data3 = await getExaminationCategories();
+      setCategories(data3);
     } catch (err) {
       console.error(err);
       setError('Erreur lors du chargement des données du patient');
@@ -155,6 +160,9 @@ const ProfilePage: React.FC = () => {
                   Num Bilan
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Catégorie
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date D'enregistrement
                 </th>
                 {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -167,9 +175,16 @@ const ProfilePage: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {bilans.map((bilan) => (
-                <tr key={bilan.id} className="hover:bg-gray-50">
+                <tr 
+                  key={bilan.id} 
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => setSelectedBilan(bilan.id)}
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     {bilan.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {categories.filter(categorie => categorie.id.toString() === bilan.categorie_id.toString())[0]?.designation}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {convertDateShort(bilan.save_at)}
@@ -185,7 +200,6 @@ const ProfilePage: React.FC = () => {
                   </td> */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => setSelectedBilan(bilan.id)}
                       className="text-[#464E77] hover:text-[#363c5d] transition-colors"
                     >
                       Afficher Les Détails
