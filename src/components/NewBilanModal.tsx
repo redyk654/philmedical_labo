@@ -16,6 +16,7 @@ interface NewBilanModalProps {
 interface Invoice {
   id: string;
   id_fac: string;
+  prescripteur: string;
 }
 
 interface SampleType {
@@ -73,6 +74,9 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
   };
 
   const handleInvoiceSelect = (invoice: Invoice) => {
+    if (invoice.prescripteur) {
+      setPrescripteur(prescripteurs.filter(prescripteur => prescripteur.designation === invoice.prescripteur)[0].id);
+    }
     setNumFacture(invoice.id);
     setInvoiceSuggestions([]); // Clear suggestions after selection
     // fetchInvoiceExaminations(invoice.id);
