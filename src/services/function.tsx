@@ -13,6 +13,9 @@ export const afficherAge = (age: number, ageUnit: string) => {
     if (ageUnit === "ans") {
         return age + " ans";
     }
+    if (ageUnit === "jours") {
+        return age + " jours";
+    }
     return age + " mois";
 }
 

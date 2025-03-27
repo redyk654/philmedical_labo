@@ -179,6 +179,7 @@ const EditProfilePage: React.FC = () => {
                 <option value="">Sélectionner...</option>
                 <option value="ans">ans</option>
                 <option value="mois">mois</option>
+                <option value="jours">jours</option>
               </select>
             </div>
             
