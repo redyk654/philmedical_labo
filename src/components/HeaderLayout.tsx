@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Beaker, Home, UserCircle2, Settings, LogOut, Cog, FileSpreadsheet } from 'lucide-react';
+import { Beaker, Home, UserCircle2, Settings, LogOut, Cog, FileSpreadsheet, FileText } from 'lucide-react';
 import { logout } from '../services/auth.tsx';
 
 const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -65,6 +65,15 @@ const HeaderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
               >
                 <FileSpreadsheet className="w-5 h-5" />
                 <span>Listing des bilans</span>
+              </Link>
+              <Link
+                to="/examinations"
+                className={`px-3 py-2 rounded-md flex items-center space-x-2 ${
+                  location.pathname === '/examinations' ? 'bg-[#55AF7F]' : 'hover:bg-[#363c5d]'
+                }`}
+              >
+                <FileText className="w-5 h-5" />
+                <span>Gestion Examens</span>
               </Link>
               {/* <Link
                 to="/examination-references"

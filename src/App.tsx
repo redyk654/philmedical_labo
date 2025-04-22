@@ -9,6 +9,7 @@ import { isAuthenticated } from './services/auth.tsx';
 import ConfigurationsPage from './pages/ConfigurationsPage.tsx';
 import ExaminationReferencesPage from './pages/ExaminationReferencesPage.tsx';
 import ListingPage from './pages/ListingPage.tsx';
+import ManageExaminations from './pages/ManageExaminations.tsx';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return isAuthenticated() ? <>{children}</> : <Navigate to="/login" />;
@@ -67,6 +68,13 @@ function App() {
           <PrivateRoute>
             <HeaderLayout>
               <ExaminationReferencesPage />
+            </HeaderLayout>
+          </PrivateRoute>
+        } />
+                <Route path="/examinations" element={
+          <PrivateRoute>
+            <HeaderLayout>
+              <ManageExaminations />
             </HeaderLayout>
           </PrivateRoute>
         } />

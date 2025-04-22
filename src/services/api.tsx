@@ -39,6 +39,8 @@ export interface ConfigItem {
 export interface Examination {
   id: string;
   designation: string;
+  contenu: string;
+  categorie_id: string;
 }
 
 export interface ReferenceValue {
@@ -415,4 +417,35 @@ export const getListingBilans = async (startDate: string, endDate: string): Prom
     throw new Error('Failed to fetch listing data');
   }
   return response.json();
+};
+
+export const createExamination = async (examination: Partial<Examination>): Promise<Examination> => {
+  const response = await authenticatedFetch('/manage_examinations.php', {
+    method: 'POST',
+    body: JSON.stringify(examination)
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create examination');
+  }
+  return response.json();
+};
+
+export const updateExamination = async (id: string, examination: Partial<Examination>): Promise<Examination> => {
+  const response = await authenticatedFetch(`/manage_examinations.php?id=${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(examination)
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update examination');
+  }
+  return response.json();
+};
+
+export const deleteExamination = async (id: string): Promise<void> => {
+  const response = await authenticatedFetch(`/manage_examinations.php?id=${id}`, {
+    method: 'DELETE'
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete examination');
+  }
 };

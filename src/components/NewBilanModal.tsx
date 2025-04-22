@@ -227,7 +227,7 @@ const NewBilanModal: React.FC<NewBilanModalProps> = ({ isOpen, onClose, patientN
             </div>
             <div>
               <label htmlFor="examen" className="block text-sm font-medium text-gray-700">
-                Selectionner Examens<span className='text-red-500'>*</span>
+                Selectionner Bilan<span className='text-red-500'>*</span>
               </label>
               <select
                 data-testid="exam-select"
